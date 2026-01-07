@@ -712,7 +712,12 @@ function renderMarkets() {
                 <div class="market-timer ${timeClass}">⏱ ${timeLeft}</div>
             </div>
             <div class="market-header">
-                ${charData.image ? `<img src="${charData.image}" alt="${market.character}" class="character-image" onerror="this.style.display='none'">` : ''}
+                <img 
+                    src="${charData.image || 'https://emotionull.art/wp-content/uploads/2022/12/punkrockbee-768x768.png'}" 
+                    alt="${market.character}" 
+                    class="character-image" 
+                    onerror="this.onerror=null;this.src='https://emotionull.art/wp-content/uploads/2022/12/punkrockbee-768x768.png';"
+                >
                 <div class="market-header-text">
                     <div class="market-title">${market.title}</div>
                     <div class="market-character">${market.character}</div>
@@ -756,7 +761,12 @@ function openMarketModal(market) {
     modalTitle.textContent = market.title;
     modalInfo.innerHTML = `
         <div class="modal-character-header">
-            ${charData.image ? `<img src="${charData.image}" alt="${market.character}" class="modal-character-image" onerror="this.style.display='none'">` : ''}
+            <img 
+                src="${charData.image || 'https://emotionull.art/wp-content/uploads/2022/12/punkrockbee-768x768.png'}" 
+                alt="${market.character}" 
+                class="modal-character-image" 
+                onerror="this.onerror=null;this.src='https://emotionull.art/wp-content/uploads/2022/12/punkrockbee-768x768.png';"
+            >
             <div>
                 <p><strong>Character:</strong> ${market.character}</p>
                 ${charData.bio ? `<p class="modal-character-bio">${charData.bio}</p>` : ''}
