@@ -1,0 +1,630 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    background: #0a0a0a;
+    background-image: 
+        radial-gradient(circle at 20% 50%, rgba(155, 89, 182, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(255, 107, 107, 0.1) 0%, transparent 50%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #fff;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(155, 89, 182, 0.03) 2px, rgba(155, 89, 182, 0.03) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(78, 205, 196, 0.03) 2px, rgba(78, 205, 196, 0.03) 4px);
+    pointer-events: none;
+    z-index: 0;
+    animation: scanlines 0.1s linear infinite;
+}
+
+@keyframes scanlines {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(4px); }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(155, 89, 182, 0.3);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.8),
+        0 0 50px rgba(155, 89, 182, 0.2),
+        inset 0 0 50px rgba(78, 205, 196, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #9b59b6, #4ecdc4, #ff6b6b, #ffe66d);
+    border-radius: 20px;
+    z-index: -1;
+    opacity: 0.3;
+    animation: borderGlow 3s ease infinite;
+}
+
+@keyframes borderGlow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-container {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.logo-year {
+    font-size: 1.2em;
+    color: #9b59b6;
+    font-weight: bold;
+    margin-bottom: 5px;
+    opacity: 0.8;
+    font-family: 'Courier New', monospace;
+}
+
+.logo-text {
+    font-size: 2.5em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: #9b59b6;
+    text-shadow: 0 0 20px rgba(155, 89, 182, 0.5);
+    font-family: 'Arial Black', sans-serif;
+    letter-spacing: 2px;
+}
+
+.logo-phetta {
+    color: #9b59b6;
+}
+
+.logo-verse {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.logo-rat {
+    font-size: 1.2em;
+    filter: hue-rotate(180deg);
+    animation: ratSpin 3s infinite;
+}
+
+@keyframes ratSpin {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(90deg) scale(1.1); }
+    50% { transform: rotate(180deg) scale(1); }
+    75% { transform: rotate(270deg) scale(1.1); }
+}
+
+.market-title {
+    font-size: 3.5em;
+    text-shadow: 0 0 30px rgba(78, 205, 196, 0.8), 3px 3px 6px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #ffe66d, #9b59b6);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse 2s infinite, gradientShift 5s ease infinite;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+h1 {
+    font-size: 3em;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #ffe66d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.subtitle {
+    font-size: 1.3em;
+    opacity: 0.9;
+    margin-top: 10px;
+}
+
+.tagline {
+    font-size: 0.9em;
+    opacity: 0.7;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.wallet-section {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.wallet-info {
+    margin-top: 15px;
+}
+
+.balance-display {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.balance-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.balance-label {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.balance-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #4ecdc4;
+}
+
+.token-info {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.token-info h3 {
+    margin-bottom: 15px;
+}
+
+.token-data {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.token-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.token-stat span:last-child {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffe66d;
+}
+
+.btn {
+    padding: 12px 24px;
+    font-size: 1.1em;
+    font-family: 'Comic Sans MS', cursive;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #4ecdc4, #44a08d);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+}
+
+.btn-yes {
+    background: linear-gradient(45deg, #4ecdc4, #44a08d);
+    color: white;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.btn-yes:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+}
+
+.btn-no {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a6f);
+    color: white;
+    flex: 1;
+}
+
+.btn-no:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.hidden {
+    display: none;
+}
+
+.markets-section {
+    margin-bottom: 30px;
+}
+
+.markets-section h2 {
+    margin-bottom: 10px;
+    font-size: 2em;
+}
+
+.market-info {
+    opacity: 0.8;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.markets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.market-card {
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(155, 89, 182, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.market-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.market-card:hover::before {
+    left: 100%;
+}
+
+.market-card:hover {
+    border-color: rgba(78, 205, 196, 0.8);
+    transform: translateX(5px) scale(1.02);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(78, 205, 196, 0.3);
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.market-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #4ecdc4;
+}
+
+.market-description {
+    opacity: 0.8;
+    margin-bottom: 15px;
+    font-size: 0.95em;
+}
+
+.market-character {
+    font-size: 0.9em;
+    opacity: 0.7;
+    margin-bottom: 10px;
+    font-style: italic;
+    color: #9b59b6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.market-resolved {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(155, 89, 182, 0.2);
+    border: 1px solid rgba(155, 89, 182, 0.5);
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    color: #9b59b6;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.market-stat-shares {
+    font-size: 0.75em;
+    opacity: 0.6;
+    margin-top: 3px;
+}
+
+.market-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.market-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.market-stat-label {
+    font-size: 0.8em;
+    opacity: 0.7;
+}
+
+.market-stat-value {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.yes-stat {
+    color: #4ecdc4;
+}
+
+.no-stat {
+    color: #ff6b6b;
+}
+
+.my-positions {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.my-positions h2 {
+    margin-bottom: 15px;
+}
+
+.positions-list {
+    min-height: 100px;
+}
+
+.position-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 4px solid #4ecdc4;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.position-info {
+    flex: 1;
+}
+
+.position-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.position-details {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.position-value {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffe66d;
+}
+
+.empty-state {
+    text-align: center;
+    opacity: 0.6;
+    padding: 40px;
+    font-style: italic;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid rgba(78, 205, 196, 0.5);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 2em;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.close:hover {
+    opacity: 1;
+}
+
+.modal-market-info {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.bet-options {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.bet-amount {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.bet-amount label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.bet-amount input {
+    padding: 12px;
+    font-size: 1.1em;
+    border-radius: 10px;
+    border: 3px solid rgba(78, 205, 196, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    text-align: center;
+    width: 200px;
+}
+
+.modal-status {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    min-height: 40px;
+}
+
+.modal-status.pending {
+    background: rgba(255, 193, 7, 0.3);
+}
+
+.modal-status.success {
+    background: rgba(76, 175, 80, 0.3);
+}
+
+.modal-status.error {
+    background: rgba(244, 67, 54, 0.3);
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    opacity: 0.8;
+    font-size: 0.9em;
+}
+
+footer code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+footer a {
+    color: #4ecdc4;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+.modal-odds {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.modal-odds div {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.disclaimer {
+    font-size: 0.8em;
+    opacity: 0.6;
+    font-style: italic;
+    margin-top: 10px;
+    color: #ff6b6b;
+}
+

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="fc:frame" content="vNext" />
+    <meta property="fc:frame:image" content="https://your-domain.com/phettamarket.png" />
+    <meta property="og:title" content="PhettaMarket 🎯 - Predict the Phettaverse" />
+    <meta property="og:description" content="Bet PNR tokens on weird Phettaverse scenarios! Will Phetta find the cheese? 🧀" />
+    <title>PhettaMarket 🎯 - Predict the Phettaverse</title>
+    <link rel="stylesheet" href="phettamarket.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-year">2042</div>
+                <div class="logo-text">
+                    <span class="logo-phetta">PHETTA</span>
+                    <span class="logo-verse">
+                        <span class="logo-rat">🐀</span>VERSE
+                    </span>
+                </div>
+            </div>
+            <h1 class="market-title">PhettaMarket</h1>
+            <p class="subtitle">Predict the Unpredictable Phettaverse</p>
+            <p class="tagline">Where weird scenarios meet real predictions (and coin flips)</p>
+            <p class="disclaimer">⚠️ All markets resolve via random coin flip. This is not financial advice. It's barely even advice.</p>
+        </header>
+
+        <div class="wallet-section">
+            <button id="connectWallet" class="btn btn-primary">🔗 Connect Wallet</button>
+            <div id="walletInfo" class="wallet-info hidden">
+                <div class="balance-display">
+                    <div class="balance-item">
+                        <span class="balance-label">PNR Balance:</span>
+                        <span id="pnrBalance" class="balance-value">0 PNR</span>
+                    </div>
+                    <div class="balance-item">
+                        <span class="balance-label">Portfolio Value:</span>
+                        <span id="portfolioValue" class="balance-value">0 PNR</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="token-info">
+                <h3>📊 PNR Token Info</h3>
+                <div id="tokenData" class="token-data">
+                    <div class="token-stat">
+                        <span class="stat-label">Price:</span>
+                        <span id="tokenPrice">Loading...</span>
+                    </div>
+                    <div class="token-stat">
+                        <span class="stat-label">Market Cap:</span>
+                        <span id="tokenMarketCap">Loading...</span>
+                    </div>
+                    <div class="token-stat">
+                        <span class="stat-label">Volume (24h):</span>
+                        <span id="tokenVolume">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="markets-section">
+            <h2>🎲 Active Prediction Markets</h2>
+            <p class="market-info">Each market resolves randomly (coin flip). Bet on YES or NO!</p>
+            
+            <div id="marketsList" class="markets-list">
+                <!-- Markets will be dynamically generated -->
+            </div>
+        </div>
+
+        <div class="my-positions">
+            <h2>📈 My Positions</h2>
+            <div id="positionsList" class="positions-list">
+                <p class="empty-state">No active positions. Place a bet to get started!</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>⚠️ This is a silly prediction market. Outcomes are randomly determined. Use at your own risk! ⚠️</p>
+            <p>PNR Token: <code>0xffe45fb9d4400904a49f5ac28ba6e74993410b01</code></p>
+            <p>Powered by <a href="https://emotionull.art/" target="_blank">Phettaverse</a> 🎨</p>
+        </footer>
+    </div>
+
+    <!-- Market Modal -->
+    <div id="marketModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Place Your Bet</h2>
+            <div id="modalMarketInfo" class="modal-market-info"></div>
+            <div class="bet-options">
+                <button class="btn btn-yes" onclick="placeBet(true)">✅ YES</button>
+                <button class="btn btn-no" onclick="placeBet(false)">❌ NO</button>
+            </div>
+            <div class="bet-amount">
+                <label>Bet Amount (PNR):</label>
+                <input type="number" id="betAmount" min="1" value="10" step="1">
+            </div>
+            <div id="modalStatus" class="modal-status"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script src="phettamarket.js"></script>
+</body>
+</html>
+
