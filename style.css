@@ -228,11 +228,32 @@ main {
     border-color: rgba(155, 89, 182, 0.3);
 }
 
+.market-header {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.character-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.market-header-text {
+    flex: 1;
+}
+
 .market-title {
     font-size: 1.1em;
     font-weight: 600;
     color: #ffffff;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     line-height: 1.4;
 }
 
@@ -246,10 +267,22 @@ main {
 .market-character {
     font-size: 0.8em;
     color: #9b59b6;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 500;
+}
+
+.character-bio {
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(155, 89, 182, 0.1);
+    border-left: 3px solid #9b59b6;
+    border-radius: 4px;
+    line-height: 1.5;
+    font-style: italic;
 }
 
 .market-odds {
@@ -455,6 +488,31 @@ main {
 
 .modal-market-info strong {
     color: #9b59b6;
+}
+
+.modal-character-header {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.modal-character-image {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.modal-character-bio {
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+    margin-top: 8px;
+    line-height: 1.5;
 }
 
 .modal-odds {

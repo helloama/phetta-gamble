@@ -110,7 +110,20 @@
         </div>
     </div>
 
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
-    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script>
+        // Wait for ethers to load before running our script
+        window.addEventListener('load', function() {
+            if (typeof ethers === 'undefined') {
+                console.error('Ethers.js failed to load');
+                alert('Failed to load required libraries. Please refresh the page.');
+            } else {
+                // Load our script after ethers is ready
+                const script = document.createElement('script');
+                script.src = 'script.js';
+                document.body.appendChild(script);
+            }
+        });
+    </script>
 </body>
 </html>
