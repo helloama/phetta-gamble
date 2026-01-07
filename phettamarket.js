@@ -266,20 +266,23 @@ function renderMarkets() {
         marketCard.className = 'market-card';
         marketCard.onclick = () => openMarketModal(market);
         
+        const volume = Math.floor((market.yesShares + market.noShares) / 10); // Simplified volume calc
+        
         marketCard.innerHTML = `
+            <div class="market-volume">💰 ${volume}K Vol.</div>
             <div class="market-title">${market.title}</div>
             <div class="market-description">${market.description}</div>
-            <div class="market-character">Character: <strong>${market.character}</strong></div>
-            <div class="market-stats">
-                <div class="market-stat yes-stat">
-                    <span class="market-stat-label">YES</span>
-                    <span class="market-stat-value">${(yesPrice * 100).toFixed(1)}%</span>
-                    <span class="market-stat-shares">${market.yesShares} shares</span>
+            <div class="market-character">${market.character}</div>
+            <div class="market-odds">
+                <div class="odds-yes">
+                    <div class="odds-label">Yes</div>
+                    <div class="odds-percentage">${(yesPrice * 100).toFixed(0)}%</div>
+                    <div class="odds-shares">${market.yesShares.toFixed(0)} shares</div>
                 </div>
-                <div class="market-stat no-stat">
-                    <span class="market-stat-label">NO</span>
-                    <span class="market-stat-value">${(noPrice * 100).toFixed(1)}%</span>
-                    <span class="market-stat-shares">${market.noShares} shares</span>
+                <div class="odds-no">
+                    <div class="odds-label">No</div>
+                    <div class="odds-percentage">${(noPrice * 100).toFixed(0)}%</div>
+                    <div class="odds-shares">${market.noShares.toFixed(0)} shares</div>
                 </div>
             </div>
             ${market.resolved ? '<div class="market-resolved">🔒 RESOLVED</div>' : ''}

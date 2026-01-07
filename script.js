@@ -155,32 +155,64 @@ function savePositions() {
 
 // Connect wallet
 async function connectWallet() {
-    if (typeof window.ethereum !== 'undefined') {
+    // Check if ethers is loaded
+    if (typeof ethers === 'undefined') {
+        alert('Ethers.js library is not loaded. Please refresh the page.');
+        console.error('Ethers.js not found');
+        return;
+    }
+    
+    if (typeof window.ethereum === 'undefined') {
+        alert('Please install MetaMask or another Ethereum wallet!\n\nYou can get MetaMask at: https://metamask.io/');
+        return;
+    }
+    
+    try {
+        // Request account access
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        
+        // Create provider
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        
+        // Get signer
+        signer = provider.getSigner();
+        walletAddress = await signer.getAddress();
+        
+        // Create contract instance
+        pnrContract = new ethers.Contract(PNR_CONTRACT, ERC20_ABI, signer);
+        
+        // Get decimals
         try {
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            await provider.send("eth_requestAccounts", []);
-            signer = provider.getSigner();
-            walletAddress = await signer.getAddress();
-            
-            pnrContract = new ethers.Contract(PNR_CONTRACT, ERC20_ABI, signer);
-            
-            try {
-                pnrDecimals = await pnrContract.decimals();
-            } catch (e) {
-                console.warn('Could not fetch decimals, using 18');
-                pnrDecimals = 18;
-            }
-            
-            document.getElementById('connectWallet').textContent = '✅ Connected';
-            document.getElementById('walletInfo').classList.remove('hidden');
-            
-            await updateBalance();
-            await fetchTokenData();
-        } catch (error) {
-            alert('Failed to connect wallet: ' + error.message);
+            pnrDecimals = await pnrContract.decimals();
+        } catch (e) {
+            console.warn('Could not fetch decimals, using 18', e);
+            pnrDecimals = 18;
         }
-    } else {
-        alert('Please install MetaMask or another Ethereum wallet!');
+        
+        // Update UI
+        document.getElementById('connectWallet').textContent = '✅ Connected';
+        document.getElementById('connectWallet').disabled = false;
+        document.getElementById('walletInfo').classList.remove('hidden');
+        
+        // Update balances
+        await updateBalance();
+        await fetchTokenData();
+        
+        console.log('Wallet connected:', walletAddress);
+    } catch (error) {
+        console.error('Wallet connection error:', error);
+        let errorMsg = 'Failed to connect wallet';
+        
+        if (error.code === 4001) {
+            errorMsg = 'Connection rejected. Please approve the connection request.';
+        } else if (error.code === -32002) {
+            errorMsg = 'Connection request already pending. Please check your wallet.';
+        } else if (error.message) {
+            errorMsg = error.message;
+        }
+        
+        alert(errorMsg);
+        document.getElementById('connectWallet').disabled = false;
     }
 }
 
@@ -462,18 +494,55 @@ function updatePositionsDisplay() {
     });
 }
 
-// Initialize
-document.getElementById('connectWallet').addEventListener('click', connectWallet);
-loadPositions();
-renderMarkets();
-updatePositionsDisplay();
-
-// Auto-connect if already connected
-if (typeof window.ethereum !== 'undefined') {
-    window.ethereum.on('accountsChanged', () => {
-        connectWallet();
-    });
-}
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup wallet button
+    const connectBtn = document.getElementById('connectWallet');
+    if (connectBtn) {
+        connectBtn.addEventListener('click', function() {
+            connectBtn.disabled = true;
+            connectBtn.textContent = 'Connecting...';
+            connectWallet().finally(() => {
+                connectBtn.disabled = false;
+            });
+        });
+    }
+    
+    // Load data
+    loadPositions();
+    renderMarkets();
+    updatePositionsDisplay();
+    
+    // Setup wallet event listeners
+    if (typeof window.ethereum !== 'undefined') {
+        // Handle account changes
+        window.ethereum.on('accountsChanged', (accounts) => {
+            if (accounts.length === 0) {
+                // User disconnected
+                document.getElementById('connectWallet').textContent = 'Connect Wallet';
+                document.getElementById('walletInfo').classList.add('hidden');
+                provider = null;
+                signer = null;
+                walletAddress = null;
+                pnrContract = null;
+            } else {
+                // Account switched
+                connectWallet();
+            }
+        });
+        
+        // Handle chain changes
+        window.ethereum.on('chainChanged', (chainId) => {
+            // Reload page on chain change
+            window.location.reload();
+        });
+    }
+    
+    // Check if ethers loaded
+    if (typeof ethers === 'undefined') {
+        console.error('Ethers.js failed to load. Check the CDN link.');
+    }
+});
 
 // Periodically resolve markets (randomly, for demo purposes)
 // In production, this would be done by an oracle or admin

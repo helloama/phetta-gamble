@@ -5,108 +5,59 @@
 }
 
 body {
-    font-family: 'Arial', 'Helvetica', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
     background: #0a0a0a;
-    background-image: 
-        radial-gradient(circle at 20% 50%, rgba(155, 89, 182, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 20%, rgba(255, 107, 107, 0.1) 0%, transparent 50%);
     min-height: 100vh;
-    padding: 20px;
-    color: #fff;
-    position: relative;
-    overflow-x: hidden;
-}
-
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(155, 89, 182, 0.03) 2px, rgba(155, 89, 182, 0.03) 4px),
-        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(78, 205, 196, 0.03) 2px, rgba(78, 205, 196, 0.03) 4px);
-    pointer-events: none;
-    z-index: 0;
-    animation: scanlines 0.1s linear infinite;
-}
-
-@keyframes scanlines {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(4px); }
+    color: #ffffff;
+    line-height: 1.5;
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    background: rgba(10, 10, 10, 0.8);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(155, 89, 182, 0.3);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.8),
-        0 0 50px rgba(155, 89, 182, 0.2),
-        inset 0 0 50px rgba(78, 205, 196, 0.1);
-    position: relative;
-    z-index: 1;
+    padding: 0 20px;
 }
 
-.container::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #9b59b6, #4ecdc4, #ff6b6b, #ffe66d);
-    border-radius: 20px;
-    z-index: -1;
-    opacity: 0.3;
-    animation: borderGlow 3s ease infinite;
-}
-
-@keyframes borderGlow {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.6; }
-}
-
+/* Header - Polymarket style */
 header {
-    text-align: center;
-    margin-bottom: 30px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-    padding-bottom: 20px;
-    position: relative;
-    overflow: hidden;
+    background: #0a0a0a;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .logo-container {
-    margin-bottom: 20px;
-    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .logo-year {
-    font-size: 1.2em;
+    font-size: 0.85em;
     color: #9b59b6;
-    font-weight: bold;
-    margin-bottom: 5px;
-    opacity: 0.8;
+    font-weight: 600;
     font-family: 'Courier New', monospace;
 }
 
 .logo-text {
-    font-size: 2.5em;
-    font-weight: bold;
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #ffffff;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 5px;
-    color: #9b59b6;
-    text-shadow: 0 0 20px rgba(155, 89, 182, 0.5);
-    font-family: 'Arial Black', sans-serif;
-    letter-spacing: 2px;
+    gap: 4px;
 }
 
 .logo-phetta {
@@ -116,326 +67,286 @@ header {
 .logo-verse {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
 }
 
 .logo-rat {
-    font-size: 1.2em;
-    filter: hue-rotate(180deg);
-    animation: ratSpin 3s infinite;
-}
-
-@keyframes ratSpin {
-    0%, 100% { transform: rotate(0deg) scale(1); }
-    25% { transform: rotate(90deg) scale(1.1); }
-    50% { transform: rotate(180deg) scale(1); }
-    75% { transform: rotate(270deg) scale(1.1); }
+    font-size: 1.1em;
 }
 
 .market-title {
-    font-size: 3.5em;
-    text-shadow: 0 0 30px rgba(78, 205, 196, 0.8), 3px 3px 6px rgba(0, 0, 0, 0.5);
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #ffe66d, #9b59b6);
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: pulse 2s infinite, gradientShift 5s ease infinite;
-    font-weight: 900;
-    letter-spacing: 3px;
-    text-transform: uppercase;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #ffffff;
+    margin-left: 8px;
 }
 
-@keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-h1 {
-    font-size: 3em;
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #ffe66d);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
-
-.subtitle {
-    font-size: 1.3em;
-    opacity: 0.9;
-    margin-top: 10px;
-}
-
-.tagline {
+.btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
     font-size: 0.9em;
-    opacity: 0.7;
-    font-style: italic;
-    margin-top: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #9b59b6;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: #8e44ad;
+}
+
+/* Main content */
+main {
+    padding: 24px 0;
 }
 
 .wallet-section {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
     padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-    text-align: center;
+    margin-bottom: 24px;
 }
 
 .wallet-info {
-    margin-top: 15px;
+    margin-top: 16px;
 }
 
 .balance-display {
     display: flex;
-    gap: 30px;
-    justify-content: center;
-    margin-top: 15px;
+    gap: 24px;
+    flex-wrap: wrap;
 }
 
 .balance-item {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
 }
 
 .balance-label {
-    font-size: 0.9em;
-    opacity: 0.8;
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .balance-value {
-    font-size: 1.5em;
-    font-weight: bold;
+    font-size: 1.25em;
+    font-weight: 600;
     color: #4ecdc4;
 }
 
 .token-info {
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .token-info h3 {
-    margin-bottom: 15px;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 12px;
+    font-weight: 500;
 }
 
 .token-data {
     display: flex;
-    gap: 30px;
-    justify-content: center;
+    gap: 24px;
     flex-wrap: wrap;
 }
 
 .token-stat {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    text-align: center;
+    gap: 4px;
 }
 
 .stat-label {
-    font-size: 0.9em;
-    opacity: 0.8;
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .token-stat span:last-child {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #ffe66d;
+    font-size: 1em;
+    font-weight: 600;
+    color: #ffffff;
 }
 
-.btn {
-    padding: 12px 24px;
-    font-size: 1.1em;
-    font-family: 'Comic Sans MS', cursive;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
+/* Markets section - Polymarket card style */
+.markets-section {
+    margin-bottom: 32px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.section-header h2 {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.market-info {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 16px;
+}
+
+.markets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Market card - Polymarket style */
+.market-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.market-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(155, 89, 182, 0.3);
+}
+
+.market-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.market-description {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.market-character {
+    font-size: 0.8em;
+    color: #9b59b6;
+    margin-bottom: 16px;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
 }
 
-.btn-primary {
-    background: linear-gradient(45deg, #4ecdc4, #44a08d);
-    color: white;
+.market-odds {
+    display: flex;
+    gap: 12px;
+    align-items: center;
 }
 
-.btn-primary:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
-}
-
-.btn-yes {
-    background: linear-gradient(45deg, #4ecdc4, #44a08d);
-    color: white;
+.odds-yes, .odds-no {
     flex: 1;
-    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
 }
 
-.btn-yes:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+.odds-yes {
+    background: rgba(78, 205, 196, 0.1);
+    border: 1px solid rgba(78, 205, 196, 0.2);
 }
 
-.btn-no {
-    background: linear-gradient(45deg, #ff6b6b, #ee5a6f);
-    color: white;
-    flex: 1;
+.odds-no {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.2);
 }
 
-.btn-no:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+.odds-label {
+    font-size: 0.75em;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.odds-percentage {
+    font-size: 1.5em;
+    font-weight: 700;
+}
+
+.odds-yes .odds-percentage {
+    color: #4ecdc4;
+}
+
+.odds-no .odds-percentage {
+    color: #ff6b6b;
+}
+
+.odds-shares {
+    font-size: 0.75em;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.market-volume {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 0.75em;
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.market-resolved {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(155, 89, 182, 0.2);
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: #9b59b6;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .hidden {
     display: none;
 }
 
-.markets-section {
-    margin-bottom: 30px;
-}
-
-.markets-section h2 {
-    margin-bottom: 10px;
-    font-size: 2em;
-}
-
-.market-info {
-    opacity: 0.8;
-    margin-bottom: 20px;
-    font-style: italic;
-}
-
-.markets-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.market-card {
-    background: rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(155, 89, 182, 0.3);
-    border-radius: 15px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-}
-
-.market-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.1), transparent);
-    transition: left 0.5s;
-}
-
-.market-card:hover::before {
-    left: 100%;
-}
-
-.market-card:hover {
-    border-color: rgba(78, 205, 196, 0.8);
-    transform: translateX(5px) scale(1.02);
-    box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.5),
-        0 0 30px rgba(78, 205, 196, 0.3);
-    background: rgba(0, 0, 0, 0.7);
-}
-
-.market-title {
-    font-size: 1.3em;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #4ecdc4;
-}
-
-.market-description {
-    opacity: 0.8;
-    margin-bottom: 15px;
-    font-size: 0.95em;
-}
-
-.market-character {
-    font-size: 0.9em;
-    opacity: 0.7;
-    margin-bottom: 10px;
-    font-style: italic;
-    color: #9b59b6;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.market-resolved {
-    margin-top: 15px;
-    padding: 10px;
-    background: rgba(155, 89, 182, 0.2);
-    border: 1px solid rgba(155, 89, 182, 0.5);
-    border-radius: 8px;
-    text-align: center;
-    font-weight: bold;
-    color: #9b59b6;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-.market-stat-shares {
-    font-size: 0.75em;
-    opacity: 0.6;
-    margin-top: 3px;
-}
-
-.market-stats {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.market-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.market-stat-label {
-    font-size: 0.8em;
-    opacity: 0.7;
-}
-
-.market-stat-value {
-    font-size: 1.1em;
-    font-weight: bold;
-}
-
-.yes-stat {
-    color: #4ecdc4;
-}
-
-.no-stat {
-    color: #ff6b6b;
-}
-
+/* Positions section */
 .my-positions {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
     padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 30px;
+    margin-bottom: 32px;
 }
 
 .my-positions h2 {
-    margin-bottom: 15px;
+    font-size: 1.25em;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 16px;
 }
 
 .positions-list {
@@ -443,11 +354,11 @@ h1 {
 }
 
 .position-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-left: 4px solid #4ecdc4;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 3px solid #4ecdc4;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -458,29 +369,31 @@ h1 {
 }
 
 .position-title {
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 4px;
+    font-size: 0.95em;
 }
 
 .position-details {
-    font-size: 0.9em;
-    opacity: 0.8;
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .position-value {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #ffe66d;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #4ecdc4;
 }
 
 .empty-state {
     text-align: center;
-    opacity: 0.6;
+    color: rgba(255, 255, 255, 0.5);
     padding: 40px;
-    font-style: italic;
+    font-size: 0.9em;
 }
 
-/* Modal Styles */
+/* Modal - Polymarket style */
 .modal {
     display: none;
     position: fixed;
@@ -490,7 +403,7 @@ h1 {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(4px);
 }
 
 .modal.show {
@@ -500,10 +413,10 @@ h1 {
 }
 
 .modal-content {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border: 2px solid rgba(78, 205, 196, 0.5);
-    border-radius: 20px;
-    padding: 30px;
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 24px;
     max-width: 500px;
     width: 90%;
     position: relative;
@@ -514,90 +427,163 @@ h1 {
     position: absolute;
     right: 20px;
     top: 20px;
-    font-size: 2em;
-    font-weight: bold;
+    font-size: 1.5em;
+    font-weight: 300;
     cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.3s;
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.2s;
+    line-height: 1;
 }
 
 .close:hover {
-    opacity: 1;
+    color: #ffffff;
 }
 
 .modal-market-info {
     margin: 20px 0;
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+}
+
+.modal-market-info p {
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.modal-market-info strong {
+    color: #9b59b6;
+}
+
+.modal-odds {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+}
+
+.modal-odds div {
+    flex: 1;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: 600;
 }
 
 .bet-options {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     margin: 20px 0;
 }
 
 .bet-amount {
     margin: 20px 0;
-    text-align: center;
 }
 
 .bet-amount label {
     display: block;
-    margin-bottom: 10px;
-    font-size: 1.1em;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
 }
 
 .bet-amount input {
+    width: 100%;
     padding: 12px;
-    font-size: 1.1em;
-    border-radius: 10px;
-    border: 3px solid rgba(78, 205, 196, 0.5);
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    font-size: 1em;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
     text-align: center;
-    width: 200px;
+}
+
+.bet-amount input:focus {
+    outline: none;
+    border-color: #9b59b6;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-yes, .btn-no {
+    flex: 1;
+    padding: 14px;
+    font-size: 1em;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-yes {
+    background: #4ecdc4;
+    color: #0a0a0a;
+}
+
+.btn-yes:hover {
+    background: #3db8af;
+}
+
+.btn-no {
+    background: #ff6b6b;
+    color: #ffffff;
+}
+
+.btn-no:hover {
+    background: #ee5a5a;
 }
 
 .modal-status {
-    margin-top: 15px;
-    padding: 10px;
+    margin-top: 16px;
+    padding: 12px;
     border-radius: 8px;
     text-align: center;
     min-height: 40px;
+    font-size: 0.9em;
 }
 
 .modal-status.pending {
-    background: rgba(255, 193, 7, 0.3);
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.2);
 }
 
 .modal-status.success {
-    background: rgba(76, 175, 80, 0.3);
+    background: rgba(76, 175, 80, 0.1);
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.2);
 }
 
 .modal-status.error {
-    background: rgba(244, 67, 54, 0.3);
+    background: rgba(244, 67, 54, 0.1);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.2);
 }
 
+/* Footer */
 footer {
     text-align: center;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 2px solid rgba(255, 255, 255, 0.2);
-    opacity: 0.8;
-    font-size: 0.9em;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85em;
 }
 
 footer code {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 5px 10px;
-    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
     font-size: 0.9em;
+    font-family: 'Courier New', monospace;
 }
 
 footer a {
-    color: #4ecdc4;
+    color: #9b59b6;
     text-decoration: none;
 }
 
@@ -605,26 +591,23 @@ footer a:hover {
     text-decoration: underline;
 }
 
-.modal-odds {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 15px;
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
+/* Responsive */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .balance-display {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .market-odds {
+        flex-direction: column;
+    }
+    
+    .odds-yes, .odds-no {
+        width: 100%;
+    }
 }
-
-.modal-odds div {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.disclaimer {
-    font-size: 0.8em;
-    opacity: 0.6;
-    font-style: italic;
-    margin-top: 10px;
-    color: #ff6b6b;
-}
-
