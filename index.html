@@ -88,6 +88,19 @@
             <div class="markets-section">
                 <div class="section-header">
                     <h2>Active Markets</h2>
+                    <div class="market-controls">
+                        <select id="marketFilter" class="market-filter" onchange="setMarketFilter(this.value)">
+                            <option value="all">All Types</option>
+                            <option value="sprint">Sprints</option>
+                            <option value="journey">Journeys</option>
+                            <option value="epoch">Epoch Quests</option>
+                        </select>
+                        <select id="marketSort" class="market-sort" onchange="setMarketSort(this.value)">
+                            <option value="time">Time Left</option>
+                            <option value="volume">Volume</option>
+                            <option value="odds">Closest Odds</option>
+                        </select>
+                    </div>
                 </div>
                 <p class="market-info">Each market resolves randomly (coin flip). Bet on YES or NO!</p>
             
@@ -96,6 +109,52 @@
             </div>
         </div>
 
+            <!-- Player Stats & Game Systems -->
+            <div class="game-systems">
+                <div class="player-stats-section">
+                    <h2>📊 Your Stats</h2>
+                    <div id="playerStats" class="player-stats">
+                        <!-- Stats will be dynamically generated -->
+                    </div>
+                    <div class="traits-section">
+                        <h3>🎁 Unlocked Traits</h3>
+                        <div id="playerTraits" class="traits-list">
+                            <!-- Traits will be dynamically generated -->
+                        </div>
+                    </div>
+                    <div class="achievements-section">
+                        <h3>🏆 Achievements</h3>
+                        <div id="playerAchievements" class="achievements-list">
+                            <!-- Achievements will be dynamically generated -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="emotion-index-section">
+                    <h2>🧠 Emotion Index</h2>
+                    <p class="section-description">Track your betting moods across the Phettaverse</p>
+                    <div id="emotionIndex" class="emotion-index">
+                        <!-- Emotion index will be dynamically generated -->
+                    </div>
+                </div>
+                
+                <div class="jackpot-section">
+                    <h2>🎰 Dreamstate Jackpot</h2>
+                    <p class="section-description">5% of every bet feeds the jackpot. 1% chance to win on any successful bet!</p>
+                    <div id="dreamstateJackpot" class="dreamstate-jackpot">
+                        <!-- Jackpot will be dynamically generated -->
+                    </div>
+                </div>
+                
+                <div class="event-feed-section">
+                    <h2>📡 Live Event Feed</h2>
+                    <p class="section-description">See what's happening in the Phettaverse</p>
+                    <div id="eventFeed" class="event-feed">
+                        <!-- Events will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+            
             <div class="my-positions">
                 <h2>My Positions</h2>
             <div id="positionsList" class="positions-list">
@@ -105,6 +164,11 @@
 
         </main>
     </div>
+    
+    <!-- Notifications -->
+    <div id="oracleMessage" class="oracle-message" style="display: none;"></div>
+    <div id="traitUnlock" class="trait-unlock-notification" style="display: none;"></div>
+    <div id="jackpotWin" class="jackpot-win-notification" style="display: none;"></div>
 
     <footer>
         <p>⚠️ This is a silly prediction market. Outcomes are randomly determined. Use at your own risk! ⚠️</p>
@@ -124,6 +188,12 @@
             </div>
             <div class="bet-amount">
                 <label>Bet Amount (PNR):</label>
+                <div class="quick-bet-buttons">
+                    <button type="button" class="btn-quick-bet" onclick="setBetAmount(10)">10</button>
+                    <button type="button" class="btn-quick-bet" onclick="setBetAmount(50)">50</button>
+                    <button type="button" class="btn-quick-bet" onclick="setBetAmount(100)">100</button>
+                    <button type="button" class="btn-quick-bet" onclick="setBetAmount(500)">500</button>
+                </div>
                 <input type="number" id="betAmount" min="1" value="10" step="1">
             </div>
             <div id="modalStatus" class="modal-status"></div>

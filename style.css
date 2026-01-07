@@ -350,6 +350,40 @@ main {
     position: relative;
 }
 
+.market-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.market-timer {
+    font-size: 0.85em;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+}
+
+.timer-active {
+    background: rgba(78, 205, 196, 0.2);
+    color: #4ecdc4;
+    border: 1px solid rgba(78, 205, 196, 0.3);
+}
+
+.timer-ending {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    animation: pulse 1s infinite;
+}
+
+.timer-resolved {
+    background: rgba(155, 89, 182, 0.2);
+    color: #9b59b6;
+    border: 1px solid rgba(155, 89, 182, 0.3);
+}
+
 .market-card:hover {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(155, 89, 182, 0.3);
@@ -489,6 +523,11 @@ main {
     letter-spacing: 0.5px;
 }
 
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
 .hidden {
     display: none;
 }
@@ -522,6 +561,103 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: all 0.2s;
+}
+
+.position-card.position-won {
+    border-left-color: #4caf50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.position-card.position-lost {
+    border-left-color: #f44336;
+    background: rgba(244, 67, 54, 0.1);
+}
+
+.position-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 12px;
+}
+
+.status-badge {
+    font-size: 0.75em;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-active {
+    background: rgba(78, 205, 196, 0.2);
+    color: #4ecdc4;
+}
+
+.badge-won {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.badge-lost {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.position-stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.stat-item.profit {
+    color: #4caf50;
+    font-weight: 600;
+}
+
+.stat-item.loss {
+    color: #f44336;
+    font-weight: 600;
+}
+
+.position-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.value-profit {
+    color: #4caf50;
+}
+
+.value-loss {
+    color: #f44336;
+}
+
+.btn-cashout {
+    padding: 8px 16px;
+    background: #4caf50;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cashout:hover {
+    background: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
 .position-info {
@@ -794,5 +930,685 @@ footer a:hover {
     
     .odds-yes, .odds-no {
         width: 100%;
+    }
+}
+
+/* Game Systems - Player Stats, Traits, Emotion Index, Jackpot, Events */
+.game-systems {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin: 32px 0;
+}
+
+.player-stats-section,
+.emotion-index-section,
+.jackpot-section,
+.event-feed-section {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.player-stats-section h2,
+.emotion-index-section h2,
+.jackpot-section h2,
+.event-feed-section h2 {
+    color: #9b59b6;
+    margin-bottom: 16px;
+    font-size: 1.2em;
+}
+
+.section-description {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85em;
+    margin-bottom: 16px;
+}
+
+/* Player Stats */
+.player-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.player-stats .stat-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.player-stats .stat-label {
+    display: block;
+    font-size: 0.75em;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 4px;
+}
+
+.player-stats .stat-value {
+    display: block;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #4ecdc4;
+}
+
+.player-stats .stat-value.streak-hot {
+    color: #ff6b6b;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Traits */
+.traits-section {
+    margin-top: 24px;
+}
+
+.traits-section h3 {
+    color: #9b59b6;
+    margin-bottom: 12px;
+    font-size: 1em;
+}
+
+.traits-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.trait-badge {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(155, 89, 182, 0.3);
+}
+
+.no-traits {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9em;
+    text-align: center;
+    padding: 16px;
+}
+
+/* Emotion Index */
+.emotion-index {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.emotion-bar {
+    display: grid;
+    grid-template-columns: 120px 1fr 60px;
+    gap: 12px;
+    align-items: center;
+}
+
+.emotion-label {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.emotion-progress {
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.emotion-fill {
+    height: 100%;
+    border-radius: 12px;
+    transition: width 0.5s ease;
+}
+
+.emotion-fill.dreamstate {
+    background: linear-gradient(90deg, #9b59b6, #8e44ad);
+}
+
+.emotion-fill.anxiety {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.emotion-fill.goober {
+    background: linear-gradient(90deg, #f39c12, #e67e22);
+}
+
+.emotion-value {
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: right;
+}
+
+.no-emotion-data {
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    padding: 24px;
+    font-size: 0.9em;
+}
+
+/* Dreamstate Jackpot */
+.dreamstate-jackpot {
+    text-align: center;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(142, 68, 173, 0.2));
+    border-radius: 12px;
+    border: 2px solid rgba(155, 89, 182, 0.3);
+}
+
+.jackpot-amount {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #9b59b6;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px rgba(155, 89, 182, 0.5);
+}
+
+.jackpot-label {
+    font-size: 1.1em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 12px;
+}
+
+.jackpot-last {
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Event Feed */
+.event-feed {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.event-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    font-size: 0.85em;
+    transition: background 0.2s;
+}
+
+.event-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.event-icon {
+    font-size: 1.2em;
+}
+
+.event-text {
+    flex: 1;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.event-time {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8em;
+}
+
+.no-events {
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    padding: 24px;
+    font-size: 0.9em;
+}
+
+/* Notifications */
+.oracle-message {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: rgba(155, 89, 182, 0.95);
+    color: #ffffff;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(155, 89, 182, 0.4);
+    z-index: 2000;
+    max-width: 400px;
+    font-size: 0.95em;
+    line-height: 1.5;
+    animation: slideIn 0.3s ease;
+}
+
+.oracle-message.oracle-win {
+    background: rgba(76, 175, 80, 0.95);
+    box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4);
+}
+
+.oracle-message.oracle-lose {
+    background: rgba(244, 67, 54, 0.95);
+    box-shadow: 0 4px 20px rgba(244, 67, 54, 0.4);
+}
+
+.trait-unlock-notification {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: #ffffff;
+    padding: 20px 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(155, 89, 182, 0.5);
+    z-index: 2000;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-align: center;
+    animation: slideIn 0.3s ease;
+}
+
+.jackpot-win-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: #ffffff;
+    padding: 32px 48px;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(243, 156, 18, 0.6);
+    z-index: 3000;
+    font-size: 1.5em;
+    font-weight: 700;
+    text-align: center;
+    animation: jackpotPop 0.5s ease;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes jackpotPop {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Quick Bet Buttons */
+.quick-bet-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-quick-bet {
+    padding: 8px 16px;
+    background: rgba(155, 89, 182, 0.2);
+    border: 1px solid rgba(155, 89, 182, 0.4);
+    color: #9b59b6;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-quick-bet:hover {
+    background: rgba(155, 89, 182, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
+}
+
+.btn-quick-bet:active {
+    transform: translateY(0);
+}
+
+/* Market Controls */
+.market-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.market-filter,
+.market-sort {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.market-filter:hover,
+.market-sort:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(155, 89, 182, 0.5);
+}
+
+.market-filter:focus,
+.market-sort:focus {
+    outline: none;
+    border-color: #9b59b6;
+}
+
+/* Market Badges */
+.market-badges {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.market-type-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7em;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.market-type-badge.type-sprint {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.4);
+}
+
+.market-type-badge.type-journey {
+    background: rgba(155, 89, 182, 0.2);
+    color: #9b59b6;
+    border: 1px solid rgba(155, 89, 182, 0.4);
+}
+
+.market-type-badge.type-epoch {
+    background: rgba(243, 156, 18, 0.2);
+    color: #f39c12;
+    border: 1px solid rgba(243, 156, 18, 0.4);
+}
+
+.price-movement {
+    font-size: 1.2em;
+    animation: pulse 2s infinite;
+}
+
+.price-movement.price-up {
+    color: #2ecc71;
+}
+
+.price-movement.price-down {
+    color: #e74c3c;
+}
+
+/* Achievements */
+.achievements-section {
+    margin-top: 24px;
+}
+
+.achievements-section h3 {
+    color: #9b59b6;
+    margin-bottom: 12px;
+    font-size: 1em;
+}
+
+.achievements-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.achievement-badge {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+    cursor: help;
+}
+
+.no-achievements {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9em;
+    text-align: center;
+    padding: 16px;
+}
+
+/* Achievement Unlock Animation */
+.achievement-unlock {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: #ffffff;
+    padding: 24px 32px;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(155, 89, 182, 0.6);
+    z-index: 3000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    min-width: 300px;
+}
+
+.achievement-unlock.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.achievement-unlock-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.achievement-icon {
+    font-size: 3em;
+}
+
+.achievement-text {
+    flex: 1;
+}
+
+.achievement-title {
+    font-size: 0.9em;
+    opacity: 0.9;
+    margin-bottom: 4px;
+}
+
+.achievement-name {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.achievement-desc {
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+/* Confetti */
+.confetti {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #9b59b6;
+    animation: confettiFall linear forwards;
+    pointer-events: none;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(200px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Bet Animation */
+.bet-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    z-index: 2500;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.bet-animation.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.bet-animation-content {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    color: #ffffff;
+    padding: 20px 32px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(78, 205, 196, 0.5);
+}
+
+.bet-amount-display {
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.bet-side-display {
+    font-size: 1.2em;
+    opacity: 0.9;
+}
+
+/* Win/Loss Animation */
+.winloss-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    z-index: 2500;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.winloss-animation.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.winloss-content {
+    padding: 32px 48px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.winloss-animation.win .winloss-content {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: #ffffff;
+}
+
+.winloss-animation.loss .winloss-content {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #ffffff;
+}
+
+.winloss-icon {
+    font-size: 4em;
+    margin-bottom: 16px;
+    animation: bounce 0.5s ease;
+}
+
+.winloss-text {
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.winloss-amount {
+    font-size: 1.5em;
+    opacity: 0.9;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Section Header */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.section-header h2 {
+    margin: 0;
+}
+
+/* Responsive updates for game systems */
+@media (max-width: 768px) {
+    .game-systems {
+        grid-template-columns: 1fr;
+    }
+    
+    .oracle-message {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .jackpot-amount {
+        font-size: 2em;
+    }
+    
+    .market-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .market-filter,
+    .market-sort {
+        width: 100%;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
     }
 }
