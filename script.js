@@ -270,6 +270,11 @@ async function connectWallet() {
 
 // Update PNR balance
 async function updateBalance() {
+    if (typeof ethers === 'undefined') {
+        console.warn('Ethers not loaded, cannot update balance');
+        return;
+    }
+    
     if (pnrContract && walletAddress) {
         try {
             const balance = await pnrContract.balanceOf(walletAddress);
@@ -435,6 +440,11 @@ window.onclick = function(event) {
 
 // Place bet
 async function placeBet(side) {
+    if (typeof ethers === 'undefined') {
+        alert('Ethers.js library is not loaded. Please refresh the page.');
+        return;
+    }
+    
     if (!signer) {
         alert('Please connect your wallet first!');
         return;
@@ -560,24 +570,39 @@ function updatePositionsDisplay() {
     });
 }
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    // Setup wallet button
+// Initialize app - markets should render even without ethers
+function initializeApp() {
+    console.log('Initializing PhettaMarket...');
+    
+    // Render markets immediately (doesn't need ethers)
+    try {
+        loadPositions();
+        renderMarkets();
+        updatePositionsDisplay();
+        console.log('Markets rendered');
+    } catch (error) {
+        console.error('Error rendering markets:', error);
+    }
+    
+    // Setup wallet button (only works if ethers is loaded)
     const connectBtn = document.getElementById('connectWallet');
     if (connectBtn) {
         connectBtn.addEventListener('click', function() {
+            if (typeof ethers === 'undefined') {
+                alert('Ethers.js library is not loaded. Please refresh the page.');
+                console.error('Ethers.js not found');
+                return;
+            }
+            
             connectBtn.disabled = true;
             connectBtn.textContent = 'Connecting...';
             connectWallet().finally(() => {
-                connectBtn.disabled = false;
+                if (connectBtn) {
+                    connectBtn.disabled = false;
+                }
             });
         });
     }
-    
-    // Load data
-    loadPositions();
-    renderMarkets();
-    updatePositionsDisplay();
     
     // Setup wallet event listeners
     if (typeof window.ethereum !== 'undefined') {
@@ -585,15 +610,19 @@ document.addEventListener('DOMContentLoaded', function() {
         window.ethereum.on('accountsChanged', (accounts) => {
             if (accounts.length === 0) {
                 // User disconnected
-                document.getElementById('connectWallet').textContent = 'Connect Wallet';
-                document.getElementById('walletInfo').classList.add('hidden');
+                const btn = document.getElementById('connectWallet');
+                if (btn) btn.textContent = 'Connect Wallet';
+                const info = document.getElementById('walletInfo');
+                if (info) info.classList.add('hidden');
                 provider = null;
                 signer = null;
                 walletAddress = null;
                 pnrContract = null;
             } else {
-                // Account switched
-                connectWallet();
+                // Account switched - only reconnect if ethers is loaded
+                if (typeof ethers !== 'undefined') {
+                    connectWallet();
+                }
             }
         });
         
@@ -604,11 +633,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Check if ethers loaded
-    if (typeof ethers === 'undefined') {
-        console.error('Ethers.js failed to load. Check the CDN link.');
-    }
-});
+    console.log('PhettaMarket initialized');
+}
+
+// Start initialization when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    // DOM already loaded
+    initializeApp();
+}
 
 // Periodically resolve markets (randomly, for demo purposes)
 // In production, this would be done by an oracle or admin
