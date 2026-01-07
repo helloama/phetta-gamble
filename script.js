@@ -2,16 +2,12 @@
 const PNR_CONTRACT = '0xffe45fb9d4400904a49f5ac28ba6e74993410b01';
 
 // House wallet address - Your Vibecoins wallet
-// This is where bet tokens go and where winnings are paid from
-const HOUSE_WALLET = '0x934aB548ac4e71608671b463755992EDEe7dbDBF'; // Your Vibecoins wallet
+const HOUSE_WALLET = '0x934aB548ac4e71608671b463755992EDEe7dbDBF';
 
-// Uniswap V3 Router (for buying tokens)
-const UNISWAP_ROUTER_V3 = '0xE592427A0AEce92De3Edee1F18E0157C05861564';
+// Vibecoin GraphQL API
+const VIBECOIN_API = 'https://vibecoin.up.railway.app/graphql';
 
-// WETH address (for ETH swaps)
-const WETH_ADDRESS = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
-
-// ERC20 ABI (full)
+// ERC20 ABI
 const ERC20_ABI = [
     "function balanceOf(address owner) view returns (uint256)",
     "function transfer(address to, uint amount) returns (bool)",
@@ -19,51 +15,142 @@ const ERC20_ABI = [
     "function allowance(address owner, address spender) view returns (uint256)",
     "function decimals() view returns (uint8)",
     "function symbol() view returns (string)",
-    "function name() view returns (string)",
-    "event Transfer(address indexed from, address indexed to, uint256 value)"
-];
-
-// Uniswap Router ABI (simplified)
-const UNISWAP_ROUTER_ABI = [
-    "function exactInputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256 amountOut)"
+    "function name() view returns (string)"
 ];
 
 let provider;
 let signer;
 let walletAddress;
 let pnrContract;
-let uniswapRouter;
-let pnrDecimals = 18; // Default, will be fetched
+let pnrDecimals = 18;
 
-// Game stats
-let stats = {
-    wins: 0,
-    losses: 0,
-    totalWon: 0,
-    totalLost: 0
-};
+// User positions: { marketId: { side: 'yes'|'no', amount: number, shares: number } }
+let userPositions = {};
 
-// Load stats from localStorage
-function loadStats() {
-    const saved = localStorage.getItem('phettaGambleStats');
+// Phettaverse Prediction Markets - Weird, surreal, Adult Swim vibes
+const MARKETS = [
+    {
+        id: 'phetta-cheese',
+        title: 'Will Phetta find the cheese before the great awakening?',
+        description: 'The purple rat is on a quest. Will he discover the legendary cheese stash hidden in the Clock Realm before reality bends?',
+        character: 'Phetta',
+        yesShares: 450,
+        noShares: 550,
+        resolved: false
+    },
+    {
+        id: 'quack-kush',
+        title: 'Will Quack smoke enough kush to transcend dimensions?',
+        description: 'Quack has been chain-smoking on the beach islands. Will he achieve interdimensional consciousness or just pass out?',
+        character: 'Quack',
+        yesShares: 320,
+        noShares: 680,
+        resolved: false
+    },
+    {
+        id: 'lucy-time-bend',
+        title: 'Will Lucy bend time so hard that Tuesday becomes a color?',
+        description: 'Lucy\'s Dream Emulation power is escalating. Scientists predict Tuesday might become a shade of purple. Will it happen?',
+        character: 'Lucy',
+        yesShares: 280,
+        noShares: 720,
+        resolved: false
+    },
+    {
+        id: '2faced-double-cross',
+        title: 'Will 2Faced successfully double-cross themselves?',
+        description: 'With four eyes watching, 2Faced is attempting the ultimate meta-scam: scamming themselves. Can they pull it off twice?',
+        character: '2Faced',
+        yesShares: 600,
+        noShares: 400,
+        resolved: false
+    },
+    {
+        id: 'cloudy-weather-control',
+        title: 'Will Cloudy use his power orbs to make it rain plushies?',
+        description: 'Cloudy controls the environment. Will he use this power to create a plushie rainstorm in Phettaverse City?',
+        character: 'Cloudy',
+        yesShares: 380,
+        noShares: 620,
+        resolved: false
+    },
+    {
+        id: 'gummy-reality-distortion',
+        title: 'Will Gummy remain peaceful while other mushrooms distort reality?',
+        description: 'Unlike other mushroom creatures, Gummy is chill. But will the chaos around him finally break his zen?',
+        character: 'Gummy',
+        yesShares: 750,
+        noShares: 250,
+        resolved: false
+    },
+    {
+        id: 'beatstar-party',
+        title: 'Will Beatstar\'s bass drop create a new dimension?',
+        description: 'Beatstar is DJing in his tech suit. The bass is getting intense. Will it literally tear a hole in spacetime?',
+        character: 'Beatstar',
+        yesShares: 420,
+        noShares: 580,
+        resolved: false
+    },
+    {
+        id: 'chef-3d-print',
+        title: 'Did Phetta 3D print Chef in a past timeline?',
+        description: 'Chef is a squid-like ramen shop owner. Evidence suggests Phetta might have 3D printed them. Will we find proof?',
+        character: 'Chef',
+        yesShares: 500,
+        noShares: 500,
+        resolved: false
+    },
+    {
+        id: 'jazz-ants-return',
+        title: 'Will the Jazz Ants return to the Studio Room and drop a new album?',
+        description: 'They\'ve been reactivated. Will they create the greatest jazz album in Phettaverse history?',
+        character: 'Jazz Ants',
+        yesShares: 550,
+        noShares: 450,
+        resolved: false
+    },
+    {
+        id: 'robo-alien-internet',
+        title: 'Will Robo-Alien use the internet to become self-aware and order pizza?',
+        description: 'He has instant internet access. Will he achieve consciousness and order a pizza to the Phettaverse?',
+        character: 'Robo-Alien',
+        yesShares: 480,
+        noShares: 520,
+        resolved: false
+    },
+    {
+        id: 'time-creature-clock-realm',
+        title: 'Will the Time Creature make time go backwards in the Clock Realm?',
+        description: 'Time is weird there already. Will it get so weird that causality breaks and effects happen before causes?',
+        character: 'Time Creature',
+        yesShares: 350,
+        noShares: 650,
+        resolved: false
+    },
+    {
+        id: 'stoned-rabbit-awakening',
+        title: 'Will Stoned Rabbit remember what happened during the great awakening?',
+        description: 'Data was lost. Will Stoned Rabbit recover memories of the event that changed everything?',
+        character: 'Stoned Rabbit',
+        yesShares: 290,
+        noShares: 710,
+        resolved: false
+    }
+];
+
+// Load positions from localStorage
+function loadPositions() {
+    const saved = localStorage.getItem('phettamarketPositions');
     if (saved) {
-        stats = JSON.parse(saved);
-        updateStatsDisplay();
+        userPositions = JSON.parse(saved);
+        updatePositionsDisplay();
     }
 }
 
-// Save stats to localStorage
-function saveStats() {
-    localStorage.setItem('phettaGambleStats', JSON.stringify(stats));
-    updateStatsDisplay();
-}
-
-// Update stats display
-function updateStatsDisplay() {
-    document.getElementById('wins').textContent = stats.wins;
-    document.getElementById('losses').textContent = stats.losses;
-    document.getElementById('totalWon').textContent = stats.totalWon.toFixed(2) + ' PNR';
-    document.getElementById('totalLost').textContent = stats.totalLost.toFixed(2) + ' PNR';
+// Save positions to localStorage
+function savePositions() {
+    localStorage.setItem('phettamarketPositions', JSON.stringify(userPositions));
 }
 
 // Connect wallet
@@ -76,9 +163,7 @@ async function connectWallet() {
             walletAddress = await signer.getAddress();
             
             pnrContract = new ethers.Contract(PNR_CONTRACT, ERC20_ABI, signer);
-            uniswapRouter = new ethers.Contract(UNISWAP_ROUTER_V3, UNISWAP_ROUTER_ABI, signer);
             
-            // Get decimals
             try {
                 pnrDecimals = await pnrContract.decimals();
             } catch (e) {
@@ -88,19 +173,9 @@ async function connectWallet() {
             
             document.getElementById('connectWallet').textContent = '✅ Connected';
             document.getElementById('walletInfo').classList.remove('hidden');
-            document.getElementById('walletInfo').innerHTML = `
-                <strong>Wallet:</strong> ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}<br>
-                <strong>PNR Balance:</strong> <span id="pnrBalance">Loading...</span><br>
-                <strong>ETH Balance:</strong> <span id="ethBalance">Loading...</span>
-            `;
             
-            updateBalance();
-            updateEthBalance();
-            
-            // Update Farcaster frame button actions
-            if (window.farcaster) {
-                window.farcaster.buttons.onClick = handleFrameButton;
-            }
+            await updateBalance();
+            await fetchTokenData();
         } catch (error) {
             alert('Failed to connect wallet: ' + error.message);
         }
@@ -115,434 +190,316 @@ async function updateBalance() {
         try {
             const balance = await pnrContract.balanceOf(walletAddress);
             const formatted = ethers.utils.formatUnits(balance, pnrDecimals);
-            document.getElementById('pnrBalance').textContent = parseFloat(formatted).toFixed(2) + ' PNR';
+            const balanceNum = parseFloat(formatted);
+            
+            document.getElementById('pnrBalance').textContent = balanceNum.toFixed(2) + ' PNR';
+            
+            // Calculate portfolio value (sum of all position values)
+            let portfolioValue = 0;
+            for (const [marketId, position] of Object.entries(userPositions)) {
+                const market = MARKETS.find(m => m.id === marketId);
+                if (market && !market.resolved) {
+                    const totalShares = market.yesShares + market.noShares;
+                    const price = position.side === 'yes' 
+                        ? market.yesShares / totalShares 
+                        : market.noShares / totalShares;
+                    portfolioValue += position.shares * price;
+                }
+            }
+            
+            document.getElementById('portfolioValue').textContent = portfolioValue.toFixed(2) + ' PNR';
         } catch (error) {
             console.error('Error fetching balance:', error);
         }
     }
 }
 
-// Update ETH balance
-async function updateEthBalance() {
-    if (provider && walletAddress) {
-        try {
-            const balance = await provider.getBalance(walletAddress);
-            const formatted = ethers.utils.formatEther(balance);
-            document.getElementById('ethBalance').textContent = parseFloat(formatted).toFixed(4) + ' ETH';
-        } catch (error) {
-            console.error('Error fetching ETH balance:', error);
+// Fetch token data from Vibecoin API
+async function fetchTokenData() {
+    try {
+        const query = `
+            query GetToken {
+                token(id: "${PNR_CONTRACT}") {
+                    currentPriceUsd
+                    marketCapUsd
+                    totalVolumeUsd
+                }
+            }
+        `;
+        
+        const response = await fetch(VIBECOIN_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+        });
+        
+        const data = await response.json();
+        
+        if (data.data && data.data.token) {
+            const token = data.data.token;
+            document.getElementById('tokenPrice').textContent = 
+                token.currentPriceUsd ? `$${parseFloat(token.currentPriceUsd).toFixed(6)}` : 'N/A';
+            document.getElementById('tokenMarketCap').textContent = 
+                token.marketCapUsd ? `$${(parseFloat(token.marketCapUsd) / 1000000).toFixed(2)}M` : 'N/A';
+            document.getElementById('tokenVolume').textContent = 
+                token.totalVolumeUsd ? `$${(parseFloat(token.totalVolumeUsd) / 1000).toFixed(2)}K` : 'N/A';
         }
+    } catch (error) {
+        console.error('Error fetching token data:', error);
+        document.getElementById('tokenPrice').textContent = 'Error loading';
+        document.getElementById('tokenMarketCap').textContent = 'Error loading';
+        document.getElementById('tokenVolume').textContent = 'Error loading';
     }
 }
 
-// Buy PNR tokens using Uniswap
-async function buyTokens() {
+// Render markets
+function renderMarkets() {
+    const marketsList = document.getElementById('marketsList');
+    marketsList.innerHTML = '';
+    
+    MARKETS.forEach(market => {
+        const totalShares = market.yesShares + market.noShares;
+        const yesPrice = market.yesShares / totalShares;
+        const noPrice = market.noShares / totalShares;
+        
+        const marketCard = document.createElement('div');
+        marketCard.className = 'market-card';
+        marketCard.onclick = () => openMarketModal(market);
+        
+        const volume = Math.floor((market.yesShares + market.noShares) / 10); // Simplified volume calc
+        
+        marketCard.innerHTML = `
+            <div class="market-volume">💰 ${volume}K Vol.</div>
+            <div class="market-title">${market.title}</div>
+            <div class="market-description">${market.description}</div>
+            <div class="market-character">${market.character}</div>
+            <div class="market-odds">
+                <div class="odds-yes">
+                    <div class="odds-label">Yes</div>
+                    <div class="odds-percentage">${(yesPrice * 100).toFixed(0)}%</div>
+                    <div class="odds-shares">${market.yesShares.toFixed(0)} shares</div>
+                </div>
+                <div class="odds-no">
+                    <div class="odds-label">No</div>
+                    <div class="odds-percentage">${(noPrice * 100).toFixed(0)}%</div>
+                    <div class="odds-shares">${market.noShares.toFixed(0)} shares</div>
+                </div>
+            </div>
+            ${market.resolved ? '<div class="market-resolved">🔒 RESOLVED</div>' : ''}
+        `;
+        
+        marketsList.appendChild(marketCard);
+    });
+}
+
+// Open market modal
+let currentMarket = null;
+function openMarketModal(market) {
+    if (market.resolved) {
+        alert('This market has already been resolved!');
+        return;
+    }
+    
+    currentMarket = market;
+    const modal = document.getElementById('marketModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalInfo = document.getElementById('modalMarketInfo');
+    
+    modalTitle.textContent = market.title;
+    modalInfo.innerHTML = `
+        <p><strong>Character:</strong> ${market.character}</p>
+        <p>${market.description}</p>
+        <div class="modal-odds">
+            <div>YES: ${((market.yesShares / (market.yesShares + market.noShares)) * 100).toFixed(1)}%</div>
+            <div>NO: ${((market.noShares / (market.yesShares + market.noShares)) * 100).toFixed(1)}%</div>
+        </div>
+    `;
+    
+    modal.classList.add('show');
+    document.getElementById('betAmount').value = '10';
+    document.getElementById('modalStatus').textContent = '';
+    document.getElementById('modalStatus').className = 'modal-status';
+}
+
+// Close modal
+document.querySelector('.close').onclick = function() {
+    document.getElementById('marketModal').classList.remove('show');
+    currentMarket = null;
+};
+
+window.onclick = function(event) {
+    const modal = document.getElementById('marketModal');
+    if (event.target === modal) {
+        modal.classList.remove('show');
+        currentMarket = null;
+    }
+};
+
+// Place bet
+async function placeBet(side) {
     if (!signer) {
         alert('Please connect your wallet first!');
         return;
     }
     
-    const ethAmount = document.getElementById('ethAmount').value;
-    if (!ethAmount || parseFloat(ethAmount) <= 0) {
-        alert('Please enter a valid ETH amount!');
+    if (!currentMarket) {
+        alert('No market selected!');
         return;
     }
     
-    const statusEl = document.getElementById('buyStatus');
-    statusEl.className = 'status-message pending';
-    statusEl.textContent = '🔄 Processing transaction...';
+    const betAmount = parseFloat(document.getElementById('betAmount').value);
+    if (!betAmount || betAmount <= 0) {
+        alert('Please enter a valid bet amount!');
+        return;
+    }
+    
+    const statusEl = document.getElementById('modalStatus');
+    statusEl.className = 'modal-status pending';
+    statusEl.textContent = '💸 Processing bet...';
     
     try {
-        // For simplicity, we'll redirect to Uniswap interface
-        // In production, you'd implement the actual swap here
+        // Transfer tokens to house
+        const betAmountWei = ethers.utils.parseUnits(betAmount.toString(), pnrDecimals);
+        const balance = await pnrContract.balanceOf(walletAddress);
         
-        const uniswapUrl = `https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=${PNR_CONTRACT}&exactAmount=${ethAmount}`;
-        window.open(uniswapUrl, '_blank');
+        if (balance.lt(betAmountWei)) {
+            throw new Error('Insufficient PNR balance');
+        }
         
-        statusEl.className = 'status-message success';
-        statusEl.textContent = '✅ Opening Uniswap... Complete the swap there, then refresh to see your balance!';
-        
-        // Alternative: Direct swap implementation (commented out - requires more complex setup)
-        /*
-        const amountIn = ethers.utils.parseEther(ethAmount);
-        const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes
-        
-        // Estimate output (simplified - in production use proper quote)
-        const tx = await uniswapRouter.exactInputSingle({
-            tokenIn: WETH_ADDRESS,
-            tokenOut: PNR_CONTRACT,
-            fee: 3000, // 0.3% fee tier
-            recipient: walletAddress,
-            deadline: deadline,
-            amountIn: amountIn,
-            amountOutMinimum: 0, // ⚠️ In production, calculate proper slippage
-            sqrtPriceLimitX96: 0
-        }, { value: amountIn });
-        
-        statusEl.textContent = `🔄 Transaction sent: ${tx.hash}`;
+        const tx = await pnrContract.transfer(HOUSE_WALLET, betAmountWei);
+        statusEl.textContent = `💸 Transaction sent: ${tx.hash.substring(0, 10)}...`;
         
         await tx.wait();
         
-        statusEl.className = 'status-message success';
-        statusEl.textContent = '✅ Tokens purchased successfully!';
-        */
+        // Calculate shares received (simplified - in real market this would be more complex)
+        const totalShares = currentMarket.yesShares + currentMarket.noShares;
+        const price = side === true 
+            ? currentMarket.yesShares / totalShares 
+            : currentMarket.noShares / totalShares;
+        const sharesReceived = betAmount / price;
         
-    } catch (error) {
-        console.error('Buy error:', error);
-        statusEl.className = 'status-message error';
-        statusEl.textContent = '❌ Error: ' + error.message;
-    }
-}
-
-// Transfer tokens from user to house (betting)
-async function placeBet(amount) {
-    if (!signer || !pnrContract) {
-        throw new Error('Wallet not connected');
-    }
-    
-    // Check balance
-    const balance = await pnrContract.balanceOf(walletAddress);
-    const betAmount = ethers.utils.parseUnits(amount.toString(), pnrDecimals);
-    
-    if (balance.lt(betAmount)) {
-        throw new Error('Insufficient PNR balance');
-    }
-    
-    // Check allowance
-    const allowance = await pnrContract.allowance(walletAddress, HOUSE_WALLET);
-    
-    // Approve if needed (or transfer directly)
-    // For simplicity, we'll transfer directly (no approval needed)
-    const tx = await pnrContract.transfer(HOUSE_WALLET, betAmount);
-    return tx;
-}
-
-// Transfer tokens from house to user (payout)
-async function payOut(amount, recipient) {
-    // NOTE: This requires the house wallet to have tokens and approve this contract
-    // For a production app, you'd want a smart contract to handle this
-    // For now, this is a placeholder that shows what would happen
-    
-    console.log(`Would payout ${amount} PNR to ${recipient}`);
-    
-    // In production, you'd either:
-    // 1. Have users trust the house wallet to send manually
-    // 2. Deploy a smart contract that holds the house funds
-    // 3. Use a relayer service
-    
-    // For demo, we'll show the expected payout
-    return { hash: '0x0000000000000000000000000000000000000000000000000000000000000000' };
-}
-
-// Show transaction status
-function showTxStatus(elementId, message, status) {
-    const el = document.getElementById(elementId);
-    if (el) {
-        el.className = `tx-status ${status}`;
-        el.textContent = message;
-    }
-}
-
-// Coin Flip Game with real token transfers
-async function flipCoin(guessHeads = null) {
-    if (!signer) {
-        alert('Please connect your wallet first!');
-        return;
-    }
-    
-    const betAmount = parseFloat(document.getElementById('coinBet').value);
-    if (!betAmount || betAmount <= 0) {
-        alert('Please enter a valid bet amount!');
-        return;
-    }
-    
-    const coinEl = document.getElementById('coinAnimation');
-    const resultEl = document.getElementById('coinResult');
-    
-    // If called from Farcaster frame, use the button choice
-    if (guessHeads === null) {
-        guessHeads = Math.random() < 0.5;
-    }
-    
-    try {
-        // Place bet (transfer tokens to house)
-        showTxStatus('coinTxStatus', '💸 Transferring bet to house...', 'pending');
-        const betTx = await placeBet(betAmount);
-        showTxStatus('coinTxStatus', `💸 Bet sent! TX: ${betTx.hash.substring(0, 10)}...`, 'pending');
+        // Update market
+        if (side === true) {
+            currentMarket.yesShares += sharesReceived;
+        } else {
+            currentMarket.noShares += sharesReceived;
+        }
         
-        // Wait for confirmation
-        await betTx.wait();
-        showTxStatus('coinTxStatus', '✅ Bet confirmed! Flipping coin...', 'pending');
+        // Save user position
+        if (!userPositions[currentMarket.id]) {
+            userPositions[currentMarket.id] = { side: side ? 'yes' : 'no', amount: 0, shares: 0 };
+        }
         
-        // Animation
-        coinEl.classList.add('coin-flipping');
-        resultEl.textContent = '🪙 Flipping... 🪙';
+        if (userPositions[currentMarket.id].side === (side ? 'yes' : 'no')) {
+            userPositions[currentMarket.id].amount += betAmount;
+            userPositions[currentMarket.id].shares += sharesReceived;
+        } else {
+            // User is betting opposite side - this is simplified
+            userPositions[currentMarket.id].amount += betAmount;
+            userPositions[currentMarket.id].shares += sharesReceived;
+        }
         
-        // Use block hash for verifiable randomness (better than Math.random)
-        const blockNumber = await provider.getBlockNumber();
-        const block = await provider.getBlock(blockNumber);
-        const result = parseInt(block.hash) % 2 === 0; // true = heads, false = tails
+        savePositions();
         
+        statusEl.className = 'modal-status success';
+        statusEl.textContent = `✅ Bet placed! You received ${sharesReceived.toFixed(2)} shares at ${(price * 100).toFixed(1)}%`;
+        
+        // Update displays
+        renderMarkets();
+        updatePositionsDisplay();
+        updateBalance();
+        
+        // Close modal after 2 seconds
         setTimeout(() => {
-            coinEl.classList.remove('coin-flipping');
-            const won = result === guessHeads;
-            
-            coinEl.textContent = result ? '🪙' : '⚫';
-            
-            if (won) {
-                const winAmount = betAmount * 2; // 2x payout
-                resultEl.textContent = `🎉 YOU WIN! Won ${winAmount} PNR! (${betAmount * 2 - betAmount} profit) 🎉`;
-                resultEl.className = 'result win';
-                
-                // Pay out winnings
-                payOut(winAmount, walletAddress).then(() => {
-                    showTxStatus('coinTxStatus', `✅ Payout: ${winAmount} PNR sent to your wallet!`, 'success');
-                    stats.wins++;
-                    stats.totalWon += winAmount;
-                    saveStats();
-                    updateBalance();
-                }).catch(err => {
-                    showTxStatus('coinTxStatus', `⚠️ Win confirmed but payout pending. Contact support if not received.`, 'pending');
-                    console.error('Payout error:', err);
-                });
-            } else {
-                resultEl.textContent = `😢 You lost ${betAmount} PNR. Better luck next time! 😢`;
-                resultEl.className = 'result lose';
-                stats.losses++;
-                stats.totalLost += betAmount;
-                saveStats();
-                showTxStatus('coinTxStatus', '💸 Bet collected by house.', 'success');
-                updateBalance();
-            }
-        }, 1000);
-        
-    } catch (error) {
-        console.error('Bet error:', error);
-        resultEl.textContent = `❌ Error: ${error.message}`;
-        resultEl.className = 'result lose';
-        showTxStatus('coinTxStatus', `❌ Transaction failed: ${error.message}`, 'error');
-    }
-}
-
-// Dice Game with real token transfers
-async function rollDice() {
-    if (!signer) {
-        alert('Please connect your wallet first!');
-        return;
-    }
-    
-    const betAmount = parseFloat(document.getElementById('diceBet').value);
-    const guess = parseInt(document.getElementById('diceGuess').value);
-    
-    if (!betAmount || betAmount <= 0) {
-        alert('Please enter a valid bet amount!');
-        return;
-    }
-    
-    if (guess < 1 || guess > 6) {
-        alert('Please pick a number between 1 and 6!');
-        return;
-    }
-    
-    const diceEl = document.getElementById('diceDisplay');
-    const resultEl = document.getElementById('diceResult');
-    
-    try {
-        // Place bet
-        showTxStatus('diceTxStatus', '💸 Transferring bet to house...', 'pending');
-        const betTx = await placeBet(betAmount);
-        await betTx.wait();
-        showTxStatus('diceTxStatus', '✅ Bet confirmed! Rolling dice...', 'pending');
-        
-        diceEl.classList.add('dice-rolling');
-        resultEl.textContent = '🎲 Rolling... 🎲';
-        
-        // Use block hash for randomness
-        const blockNumber = await provider.getBlockNumber();
-        const block = await provider.getBlock(blockNumber);
-        const roll = (parseInt(block.hash.substring(0, 10), 16) % 6) + 1;
-        
-        setTimeout(() => {
-            diceEl.classList.remove('dice-rolling');
-            const diceEmojis = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-            diceEl.textContent = diceEmojis[roll - 1];
-            
-            if (roll === guess) {
-                const winAmount = betAmount * 6; // 6x payout
-                resultEl.textContent = `🎉 JACKPOT! You rolled ${roll}! Won ${winAmount} PNR! 🎉`;
-                resultEl.className = 'result win';
-                
-                payOut(winAmount, walletAddress).then(() => {
-                    showTxStatus('diceTxStatus', `✅ Payout: ${winAmount} PNR sent!`, 'success');
-                    stats.wins++;
-                    stats.totalWon += winAmount;
-                    saveStats();
-                    updateBalance();
-                }).catch(err => {
-                    showTxStatus('diceTxStatus', `⚠️ Win confirmed but payout pending.`, 'pending');
-                    console.error('Payout error:', err);
-                });
-            } else {
-                resultEl.textContent = `😢 Rolled ${roll}, you picked ${guess}. Lost ${betAmount} PNR! 😢`;
-                resultEl.className = 'result lose';
-                stats.losses++;
-                stats.totalLost += betAmount;
-                saveStats();
-                showTxStatus('diceTxStatus', '💸 Bet collected by house.', 'success');
-                updateBalance();
-            }
-        }, 1000);
-        
-    } catch (error) {
-        console.error('Bet error:', error);
-        resultEl.textContent = `❌ Error: ${error.message}`;
-        resultEl.className = 'result lose';
-        showTxStatus('diceTxStatus', `❌ Transaction failed: ${error.message}`, 'error');
-    }
-}
-
-// Slots Game with real token transfers
-async function spinSlots() {
-    if (!signer) {
-        alert('Please connect your wallet first!');
-        return;
-    }
-    
-    const betAmount = parseFloat(document.getElementById('slotsBet').value);
-    
-    if (!betAmount || betAmount <= 0) {
-        alert('Please enter a valid bet amount!');
-        return;
-    }
-    
-    const reels = [
-        document.getElementById('reel1'),
-        document.getElementById('reel2'),
-        document.getElementById('reel3')
-    ];
-    const resultEl = document.getElementById('slotsResult');
-    const symbols = ['🎰', '💰', '💎', '⭐', '🍀', '🎲', '🪙'];
-    
-    try {
-        // Place bet
-        showTxStatus('slotsTxStatus', '💸 Transferring bet to house...', 'pending');
-        const betTx = await placeBet(betAmount);
-        await betTx.wait();
-        showTxStatus('slotsTxStatus', '✅ Bet confirmed! Spinning...', 'pending');
-        
-        // Spin animation
-        reels.forEach(reel => reel.classList.add('slot-spinning'));
-        resultEl.textContent = '🎰 Spinning... 🎰';
-        
-        // Use block hash for randomness
-        const blockNumber = await provider.getBlockNumber();
-        const block = await provider.getBlock(blockNumber);
-        const hashStr = block.hash;
-        
-        const results = [
-            symbols[parseInt(hashStr.substring(2, 4), 16) % symbols.length],
-            symbols[parseInt(hashStr.substring(4, 6), 16) % symbols.length],
-            symbols[parseInt(hashStr.substring(6, 8), 16) % symbols.length]
-        ];
-        
-        setTimeout(() => {
-            reels.forEach(reel => reel.classList.remove('slot-spinning'));
-            reels.forEach((reel, i) => {
-                reel.textContent = results[i];
-            });
-            
-            // Check for wins
-            let winAmount = 0;
-            if (results[0] === results[1] && results[1] === results[2]) {
-                winAmount = betAmount * 10; // 10x payout
-                resultEl.textContent = `🎉 JACKPOT! Three ${results[0]}! Won ${winAmount} PNR! 🎉`;
-                resultEl.className = 'result win';
-                stats.wins++;
-                stats.totalWon += winAmount;
-            } else if (results[0] === results[1] || results[1] === results[2] || results[0] === results[2]) {
-                winAmount = betAmount * 2; // 2x payout
-                resultEl.textContent = `🎉 Two of a kind! Won ${winAmount} PNR! 🎉`;
-                resultEl.className = 'result win';
-                stats.wins++;
-                stats.totalWon += winAmount;
-            } else {
-                resultEl.textContent = `😢 No match! Lost ${betAmount} PNR! 😢`;
-                resultEl.className = 'result lose';
-                stats.losses++;
-                stats.totalLost += betAmount;
-            }
-            
-            if (winAmount > 0) {
-                payOut(winAmount, walletAddress).then(() => {
-                    showTxStatus('slotsTxStatus', `✅ Payout: ${winAmount} PNR sent!`, 'success');
-                    saveStats();
-                    updateBalance();
-                }).catch(err => {
-                    showTxStatus('slotsTxStatus', `⚠️ Win confirmed but payout pending.`, 'pending');
-                    console.error('Payout error:', err);
-                });
-            } else {
-                showTxStatus('slotsTxStatus', '💸 Bet collected by house.', 'success');
-                saveStats();
-                updateBalance();
-            }
+            document.getElementById('marketModal').classList.remove('show');
+            currentMarket = null;
         }, 2000);
         
     } catch (error) {
         console.error('Bet error:', error);
-        resultEl.textContent = `❌ Error: ${error.message}`;
-        resultEl.className = 'result lose';
-        showTxStatus('slotsTxStatus', `❌ Transaction failed: ${error.message}`, 'error');
+        statusEl.className = 'modal-status error';
+        statusEl.textContent = `❌ Error: ${error.message}`;
     }
 }
 
-// Handle Farcaster frame button clicks
-function handleFrameButton(buttonIndex) {
-    switch(buttonIndex) {
-        case 1: // Heads
-            document.getElementById('coinflip').classList.add('active');
-            document.getElementById('dice').classList.remove('active');
-            document.getElementById('slots').classList.remove('active');
-            flipCoin(true);
-            break;
-        case 2: // Tails
-            document.getElementById('coinflip').classList.add('active');
-            document.getElementById('dice').classList.remove('active');
-            document.getElementById('slots').classList.remove('active');
-            flipCoin(false);
-            break;
-        case 3: // Roll Dice
-            document.getElementById('coinflip').classList.remove('active');
-            document.getElementById('dice').classList.add('active');
-            document.getElementById('slots').classList.remove('active');
-            rollDice();
-            break;
-    }
-}
-
-// Game selector
-document.querySelectorAll('.game-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.game-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.game').forEach(g => g.classList.add('hidden'));
-        
-        btn.classList.add('active');
-        const game = btn.dataset.game;
-        document.getElementById(game).classList.remove('hidden');
+// Update positions display
+function updatePositionsDisplay() {
+    const positionsList = document.getElementById('positionsList');
+    
+    const activePositions = Object.entries(userPositions).filter(([marketId, position]) => {
+        const market = MARKETS.find(m => m.id === marketId);
+        return market && !market.resolved && position.shares > 0;
     });
-});
+    
+    if (activePositions.length === 0) {
+        positionsList.innerHTML = '<p class="empty-state">No active positions. Place a bet to get started!</p>';
+        return;
+    }
+    
+    positionsList.innerHTML = '';
+    
+    activePositions.forEach(([marketId, position]) => {
+        const market = MARKETS.find(m => m.id === marketId);
+        const totalShares = market.yesShares + market.noShares;
+        const price = position.side === 'yes' 
+            ? market.yesShares / totalShares 
+            : market.noShares / totalShares;
+        const value = position.shares * price;
+        
+        const positionCard = document.createElement('div');
+        positionCard.className = 'position-card';
+        positionCard.innerHTML = `
+            <div class="position-info">
+                <div class="position-title">${market.title}</div>
+                <div class="position-details">
+                    ${position.side.toUpperCase()} • ${position.shares.toFixed(2)} shares • ${(price * 100).toFixed(1)}% odds
+                </div>
+            </div>
+            <div class="position-value">${value.toFixed(2)} PNR</div>
+        `;
+        
+        positionsList.appendChild(positionCard);
+    });
+}
 
 // Initialize
 document.getElementById('connectWallet').addEventListener('click', connectWallet);
-loadStats();
+loadPositions();
+renderMarkets();
+updatePositionsDisplay();
 
 // Auto-connect if already connected
 if (typeof window.ethereum !== 'undefined') {
     window.ethereum.on('accountsChanged', () => {
         connectWallet();
     });
-    
-    // Try to connect on load
-    connectWallet();
 }
+
+// Periodically resolve markets (randomly, for demo purposes)
+// In production, this would be done by an oracle or admin
+setInterval(() => {
+    // Randomly resolve one unresolved market every 5 minutes (for demo)
+    const unresolved = MARKETS.filter(m => !m.resolved);
+    if (unresolved.length > 0 && Math.random() < 0.1) {
+        const market = unresolved[Math.floor(Math.random() * unresolved.length)];
+        // Coin flip resolution
+        const result = Math.random() < 0.5;
+        market.resolved = true;
+        market.resolution = result ? 'yes' : 'no';
+        
+        // Update user positions (payout winners)
+        if (userPositions[market.id]) {
+            const position = userPositions[market.id];
+            if (position.side === market.resolution) {
+                // User wins - calculate payout
+                const totalShares = market.yesShares + market.noShares;
+                const payout = position.shares * (totalShares / (market.resolution === 'yes' ? market.yesShares : market.noShares));
+                console.log(`Market ${market.id} resolved ${market.resolution}. Payout: ${payout} PNR`);
+            }
+        }
+        
+        renderMarkets();
+        updatePositionsDisplay();
+    }
+}, 300000); // Check every 5 minutes
 
