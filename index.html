@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="fc:frame" content="vNext" />
+    <meta property="fc:frame:image" content="https://your-domain.com/phetta-gamble.png" />
+    <meta property="fc:frame:button:1" content="🪙 Heads" />
+    <meta property="fc:frame:button:2" content="🪙 Tails" />
+    <meta property="fc:frame:button:3" content="🎰 Roll Dice" />
+    <meta property="og:title" content="Phetta Needs Rent Gambling 🎲" />
+    <meta property="og:description" content="Bet your PNR tokens and win big! Or lose it all! 🎰" />
+    <title>Phetta Needs Rent Gambling 🎲</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎰 Phetta Needs Rent Casino 🎰</h1>
+            <p class="subtitle">The Silly Gambling App That Definitely Won't Make You Rich (Probably)</p>
+        </header>
+
+        <div class="wallet-section">
+            <button id="connectWallet" class="btn btn-primary">🔗 Connect Wallet</button>
+            <div id="walletInfo" class="wallet-info hidden"></div>
+            
+            <div class="buy-tokens-section">
+                <h3>💰 Buy PNR Tokens</h3>
+                <div class="buy-section">
+                    <label>ETH Amount to Spend:</label>
+                    <input type="number" id="ethAmount" min="0.001" value="0.01" step="0.001">
+                    <button class="btn btn-buy" onclick="buyTokens()">💸 Buy PNR with ETH</button>
+                </div>
+                <div id="buyStatus" class="status-message"></div>
+                
+                <div class="uniswap-link">
+                    <p>Or buy on Uniswap:</p>
+                    <a href="https://app.uniswap.org/#/swap?outputCurrency=0xffe45fb9d4400904a49f5ac28ba6e74993410b01" target="_blank" class="btn btn-uniswap">🌐 Open Uniswap</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-section">
+            <div class="game-selector">
+                <button class="game-btn active" data-game="coinflip">🪙 Coin Flip</button>
+                <button class="game-btn" data-game="dice">🎲 Roll Dice</button>
+                <button class="game-btn" data-game="slots">🎰 Lucky Slots</button>
+            </div>
+
+            <!-- Coin Flip Game -->
+            <div id="coinflip" class="game active">
+                <h2>🪙 Double or Nothing Coin Flip 🪙</h2>
+                <p class="payout-info">Bet your PNR tokens! Win = 2x payout. Lose = tokens go to house.</p>
+                <div class="bet-section">
+                    <label>Bet Amount (PNR):</label>
+                    <input type="number" id="coinBet" min="1" value="10" step="1">
+                    <div class="bet-buttons">
+                        <button class="btn btn-bet" onclick="flipCoin(true)">🪙 HEADS</button>
+                        <button class="btn btn-bet" onclick="flipCoin(false)">⚫ TAILS</button>
+                    </div>
+                </div>
+                <div id="coinResult" class="result"></div>
+                <div id="coinAnimation" class="coin-animation"></div>
+                <div id="coinTxStatus" class="tx-status"></div>
+            </div>
+
+            <!-- Dice Game -->
+            <div id="dice" class="game hidden">
+                <h2>🎲 Roll the Dice of Destiny 🎲</h2>
+                <p class="payout-info">Pick a number 1-6. If you're right, win 6x your bet!</p>
+                <div class="bet-section">
+                    <label>Bet Amount (PNR):</label>
+                    <input type="number" id="diceBet" min="1" value="10" step="1">
+                    <label>Pick a Number (1-6):</label>
+                    <input type="number" id="diceGuess" min="1" max="6" value="3">
+                    <button class="btn btn-bet" onclick="rollDice()">🎲 ROLL DICE</button>
+                </div>
+                <div id="diceResult" class="result"></div>
+                <div id="diceDisplay" class="dice-display"></div>
+                <div id="diceTxStatus" class="tx-status"></div>
+            </div>
+
+            <!-- Slots Game -->
+            <div id="slots" class="game hidden">
+                <h2>🎰 Lucky Phetta Slots 🎰</h2>
+                <p class="payout-info">Three of a kind = 10x! Two of a kind = 2x!</p>
+                <div class="bet-section">
+                    <label>Bet Amount (PNR):</label>
+                    <input type="number" id="slotsBet" min="1" value="10" step="1">
+                    <button class="btn btn-bet" onclick="spinSlots()">🎰 SPIN</button>
+                </div>
+                <div class="slots-machine">
+                    <div class="slot-reel" id="reel1">🎰</div>
+                    <div class="slot-reel" id="reel2">🎰</div>
+                    <div class="slot-reel" id="reel3">🎰</div>
+                </div>
+                <div id="slotsResult" class="result"></div>
+                <div id="slotsTxStatus" class="tx-status"></div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h3>📊 Your Stats</h3>
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">Wins:</span>
+                    <span id="wins">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Losses:</span>
+                    <span id="losses">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Total Won:</span>
+                    <span id="totalWon">0 PNR</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Total Lost:</span>
+                    <span id="totalLost">0 PNR</span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>⚠️ This is a silly demo app. Use at your own risk! ⚠️</p>
+            <p>PNR Token: <code>0xffe45fb9d4400904a49f5ac28ba6e74993410b01</code></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
