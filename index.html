@@ -34,14 +34,34 @@
 
             <div class="wallet-section">
                 <div id="walletInfo" class="wallet-info hidden">
-                <div class="balance-display">
-                    <div class="balance-item">
-                        <span class="balance-label">PNR Balance:</span>
-                        <span id="pnrBalance" class="balance-value">0 PNR</span>
+                    <div class="balance-display">
+                        <div class="balance-item main-balance">
+                            <span class="balance-label">Your PNR Balance</span>
+                            <span id="pnrBalance" class="balance-value large">0 PNR</span>
+                            <button class="btn btn-refresh" onclick="updateBalance()" title="Refresh balance">🔄</button>
+                        </div>
+                        <div class="balance-item">
+                            <span class="balance-label">Portfolio Value</span>
+                            <span id="portfolioValue" class="balance-value">0 PNR</span>
+                        </div>
                     </div>
-                    <div class="balance-item">
-                        <span class="balance-label">Portfolio Value:</span>
-                        <span id="portfolioValue" class="balance-value">0 PNR</span>
+                </div>
+                
+                <div class="buy-tokens-section">
+                    <h3>💰 Buy PNR Tokens</h3>
+                    <p class="buy-description">Get PNR tokens to bet on Phettaverse predictions!</p>
+                    <div class="buy-buttons">
+                        <a href="https://app.uniswap.org/#/swap?outputCurrency=0xffe45fb9d4400904a49f5ac28ba6e74993410b01" target="_blank" class="btn btn-buy-uniswap">
+                            🦄 Buy on Uniswap
+                        </a>
+                        <button class="btn btn-buy-vibecoin" onclick="openVibecoinBuy()">
+                            ⚡ Buy via Vibecoin
+                        </button>
+                    </div>
+                    <div class="token-address">
+                        <span class="address-label">PNR Contract:</span>
+                        <code id="pnrAddress" class="address-code" onclick="copyAddress()" title="Click to copy">0xffe45fb9d4400904a49f5ac28ba6e74993410b01</code>
+                        <span class="copy-hint">(click to copy)</span>
                     </div>
                 </div>
             </div>

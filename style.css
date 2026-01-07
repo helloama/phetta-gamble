@@ -146,6 +146,133 @@ main {
     color: #4ecdc4;
 }
 
+.balance-value.large {
+    font-size: 2em;
+    font-weight: 700;
+}
+
+.main-balance {
+    position: relative;
+    padding-right: 50px;
+}
+
+.btn-refresh {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 8px 12px;
+    background: rgba(78, 205, 196, 0.2);
+    border: 1px solid rgba(78, 205, 196, 0.3);
+    color: #4ecdc4;
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.btn-refresh:hover {
+    background: rgba(78, 205, 196, 0.3);
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.buy-tokens-section {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(155, 89, 182, 0.1);
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    border-radius: 12px;
+}
+
+.buy-tokens-section h3 {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.buy-description {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 16px;
+}
+
+.buy-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.btn-buy-uniswap, .btn-buy-vibecoin {
+    flex: 1;
+    min-width: 150px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: #ffffff;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95em;
+}
+
+.btn-buy-uniswap:hover, .btn-buy-vibecoin:hover {
+    background: linear-gradient(135deg, #8e44ad, #7d3c98);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
+}
+
+.btn-buy-vibecoin {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+}
+
+.btn-buy-vibecoin:hover {
+    background: linear-gradient(135deg, #44a08d, #3db8af);
+}
+
+.token-address {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    flex-wrap: wrap;
+}
+
+.address-label {
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.address-code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    color: #9b59b6;
+    background: rgba(155, 89, 182, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: all;
+    transition: all 0.2s;
+}
+
+.address-code:hover {
+    background: rgba(155, 89, 182, 0.3);
+    color: #ffffff;
+}
+
+.copy-hint {
+    font-size: 0.75em;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
 .token-info {
     margin-top: 20px;
     padding-top: 20px;

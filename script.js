@@ -1,5 +1,8 @@
-// PNR Token Contract Address
+// PNR Token Contract Address (Phetta Needs Rent)
 const PNR_CONTRACT = '0xffe45fb9d4400904a49f5ac28ba6e74993410b01';
+
+// Uniswap V3 Router for direct swaps
+const UNISWAP_V3_ROUTER = '0xE592427A0AEce92De3Edee1F18E0157C05861564';
 
 // House wallet address - Your Vibecoins wallet
 const HOUSE_WALLET = '0x934aB548ac4e71608671b463755992EDEe7dbDBF';
@@ -241,16 +244,24 @@ async function connectWallet() {
             pnrDecimals = 18;
         }
         
-        // Update UI
-        document.getElementById('connectWallet').textContent = '✅ Connected';
-        document.getElementById('connectWallet').disabled = false;
-        document.getElementById('walletInfo').classList.remove('hidden');
-        
-        // Update balances
-        await updateBalance();
-        await fetchTokenData();
-        
-        console.log('Wallet connected:', walletAddress);
+            // Update UI
+            document.getElementById('connectWallet').textContent = '✅ Connected';
+            document.getElementById('connectWallet').disabled = false;
+            document.getElementById('walletInfo').classList.remove('hidden');
+            
+            // Update balances
+            await updateBalance();
+            await fetchTokenData();
+            
+            // Auto-refresh balance every 30 seconds
+            if (window.balanceInterval) {
+                clearInterval(window.balanceInterval);
+            }
+            window.balanceInterval = setInterval(() => {
+                updateBalance();
+            }, 30000);
+            
+            console.log('Wallet connected:', walletAddress);
     } catch (error) {
         console.error('Wallet connection error:', error);
         let errorMsg = 'Failed to connect wallet';
@@ -275,31 +286,39 @@ async function updateBalance() {
         return;
     }
     
-    if (pnrContract && walletAddress) {
-        try {
-            const balance = await pnrContract.balanceOf(walletAddress);
-            const formatted = ethers.utils.formatUnits(balance, pnrDecimals);
-            const balanceNum = parseFloat(formatted);
-            
-            document.getElementById('pnrBalance').textContent = balanceNum.toFixed(2) + ' PNR';
-            
-            // Calculate portfolio value (sum of all position values)
-            let portfolioValue = 0;
-            for (const [marketId, position] of Object.entries(userPositions)) {
-                const market = MARKETS.find(m => m.id === marketId);
-                if (market && !market.resolved) {
-                    const totalShares = market.yesShares + market.noShares;
-                    const price = position.side === 'yes' 
-                        ? market.yesShares / totalShares 
-                        : market.noShares / totalShares;
-                    portfolioValue += position.shares * price;
-                }
-            }
-            
-            document.getElementById('portfolioValue').textContent = portfolioValue.toFixed(2) + ' PNR';
-        } catch (error) {
-            console.error('Error fetching balance:', error);
+    if (!pnrContract || !walletAddress) {
+        return;
+    }
+    
+    try {
+        const balance = await pnrContract.balanceOf(walletAddress);
+        const formatted = ethers.utils.formatUnits(balance, pnrDecimals);
+        const balanceNum = parseFloat(formatted);
+        
+        const balanceEl = document.getElementById('pnrBalance');
+        if (balanceEl) {
+            balanceEl.textContent = balanceNum.toFixed(2) + ' PNR';
         }
+        
+        // Calculate portfolio value (sum of all position values)
+        let portfolioValue = 0;
+        for (const [marketId, position] of Object.entries(userPositions)) {
+            const market = MARKETS.find(m => m.id === marketId);
+            if (market && !market.resolved) {
+                const totalShares = market.yesShares + market.noShares;
+                const price = position.side === 'yes' 
+                    ? market.yesShares / totalShares 
+                    : market.noShares / totalShares;
+                portfolioValue += position.shares * price;
+            }
+        }
+        
+        const portfolioEl = document.getElementById('portfolioValue');
+        if (portfolioEl) {
+            portfolioEl.textContent = portfolioValue.toFixed(2) + ' PNR';
+        }
+    } catch (error) {
+        console.error('Error fetching balance:', error);
     }
 }
 
@@ -312,6 +331,8 @@ async function fetchTokenData() {
                     currentPriceUsd
                     marketCapUsd
                     totalVolumeUsd
+                    name
+                    symbol
                 }
             }
         `;
@@ -326,18 +347,38 @@ async function fetchTokenData() {
         
         if (data.data && data.data.token) {
             const token = data.data.token;
-            document.getElementById('tokenPrice').textContent = 
-                token.currentPriceUsd ? `$${parseFloat(token.currentPriceUsd).toFixed(6)}` : 'N/A';
-            document.getElementById('tokenMarketCap').textContent = 
-                token.marketCapUsd ? `$${(parseFloat(token.marketCapUsd) / 1000000).toFixed(2)}M` : 'N/A';
-            document.getElementById('tokenVolume').textContent = 
-                token.totalVolumeUsd ? `$${(parseFloat(token.totalVolumeUsd) / 1000).toFixed(2)}K` : 'N/A';
+            const priceEl = document.getElementById('tokenPrice');
+            const marketCapEl = document.getElementById('tokenMarketCap');
+            const volumeEl = document.getElementById('tokenVolume');
+            
+            if (priceEl) {
+                priceEl.textContent = token.currentPriceUsd 
+                    ? `$${parseFloat(token.currentPriceUsd).toFixed(6)}` 
+                    : 'N/A';
+            }
+            if (marketCapEl) {
+                marketCapEl.textContent = token.marketCapUsd 
+                    ? `$${(parseFloat(token.marketCapUsd) / 1000000).toFixed(2)}M` 
+                    : 'N/A';
+            }
+            if (volumeEl) {
+                volumeEl.textContent = token.totalVolumeUsd 
+                    ? `$${(parseFloat(token.totalVolumeUsd) / 1000).toFixed(2)}K` 
+                    : 'N/A';
+            }
+        } else {
+            // Fallback if token not found in Vibecoin API
+            const priceEl = document.getElementById('tokenPrice');
+            if (priceEl) priceEl.textContent = 'Check Uniswap';
         }
     } catch (error) {
         console.error('Error fetching token data:', error);
-        document.getElementById('tokenPrice').textContent = 'Error loading';
-        document.getElementById('tokenMarketCap').textContent = 'Error loading';
-        document.getElementById('tokenVolume').textContent = 'Error loading';
+        const priceEl = document.getElementById('tokenPrice');
+        const marketCapEl = document.getElementById('tokenMarketCap');
+        const volumeEl = document.getElementById('tokenVolume');
+        if (priceEl) priceEl.textContent = 'Error loading';
+        if (marketCapEl) marketCapEl.textContent = 'Error loading';
+        if (volumeEl) volumeEl.textContent = 'Error loading';
     }
 }
 
@@ -579,6 +620,10 @@ function initializeApp() {
         loadPositions();
         renderMarkets();
         updatePositionsDisplay();
+        
+        // Fetch token data on load (doesn't need wallet)
+        fetchTokenData();
+        
         console.log('Markets rendered');
     } catch (error) {
         console.error('Error rendering markets:', error);
@@ -634,6 +679,31 @@ function initializeApp() {
     }
     
     console.log('PhettaMarket initialized');
+}
+
+// Copy PNR address to clipboard
+function copyAddress() {
+    const address = PNR_CONTRACT;
+    navigator.clipboard.writeText(address).then(() => {
+        const codeEl = document.getElementById('pnrAddress');
+        const originalText = codeEl.textContent;
+        codeEl.textContent = 'Copied!';
+        codeEl.style.color = '#4ecdc4';
+        setTimeout(() => {
+            codeEl.textContent = originalText;
+            codeEl.style.color = '';
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy:', err);
+        alert('Address: ' + address);
+    });
+}
+
+// Open Vibecoin buy page
+function openVibecoinBuy() {
+    // Vibecoin uses Uniswap v4 with bonding curve
+    // Direct link to buy PNR on Uniswap (Vibecoin tokens trade via Uniswap)
+    window.open(`https://app.uniswap.org/#/swap?outputCurrency=${PNR_CONTRACT}`, '_blank');
 }
 
 // Start initialization when DOM is ready
