@@ -778,17 +778,190 @@ function openMarketModal(market) {
     updatePriceHistory(market);
 }
 
-// Set bet amount from quick button
+// Set bet amount from quick button (no auto-focus to avoid scroll jumping)
 function setBetAmount(amount) {
     const input = document.getElementById('betAmount');
     if (input) {
         input.value = amount;
-        input.focus();
         // Visual feedback
         input.style.transform = 'scale(1.05)';
         setTimeout(() => {
             input.style.transform = 'scale(1)';
         }, 200);
+    }
+}
+
+// Update player stats display
+function updatePlayerStats() {
+    const statsEl = document.getElementById('playerStats');
+    if (!statsEl) return;
+
+    const winRate = playerState.totalBets > 0
+        ? (((playerState.totalWonPNR > 0 ? 1 : 0) / playerState.totalBets) * 100).toFixed(1)
+        : '0.0';
+
+    statsEl.innerHTML = `
+        <div class="stat-item">
+            <div class="stat-label">Total Bets</div>
+            <div class="stat-value">${playerState.totalBets}</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Win Streak</div>
+            <div class="stat-value ${playerState.streak >= 3 ? 'streak-hot' : ''}">${playerState.streak} 🔥</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Best Streak</div>
+            <div class="stat-value">${playerState.bestStreak}</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Total Won</div>
+            <div class="stat-value">${playerState.totalWonPNR.toFixed(2)} PNR</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Traits Unlocked</div>
+            <div class="stat-value">${playerState.traits.length}</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Achievements</div>
+            <div class="stat-value">${playerState.achievements.length}</div>
+        </div>
+    `;
+
+    // Update traits list
+    const traitsEl = document.getElementById('playerTraits');
+    if (traitsEl) {
+        if (playerState.traits.length === 0) {
+            traitsEl.innerHTML = '<div class="no-traits">No traits unlocked yet. Win 3+ in a row!</div>';
+        } else {
+            traitsEl.innerHTML = playerState.traits.map(t =>
+                `<div class="trait-badge">🎁 ${t}</div>`
+            ).join('');
+        }
+    }
+
+    // Update achievements list
+    const achievementsEl = document.getElementById('playerAchievements');
+    if (achievementsEl) {
+        if (!playerState.achievements || playerState.achievements.length === 0) {
+            achievementsEl.innerHTML = '<div class="no-achievements">No achievements yet. Start betting!</div>';
+        } else {
+            achievementsEl.innerHTML = playerState.achievements.map(achId => {
+                const ach = ACHIEVEMENTS[achId];
+                return ach ? `<div class="achievement-badge" title="${ach.desc}">${ach.icon} ${ach.name}</div>` : '';
+            }).join('');
+        }
+    }
+
+    // Update emotion index
+    updateEmotionIndex();
+}
+
+// Update emotion index visualization
+function updateEmotionIndex() {
+    const indexEl = document.getElementById('emotionIndex');
+    if (!indexEl) return;
+
+    const total = playerState.emotionIndex.dreamstate +
+                  playerState.emotionIndex.anxiety +
+                  playerState.emotionIndex.gooberJoy;
+
+    if (total === 0) {
+        indexEl.innerHTML = '<div class="no-emotion-data">No emotion data yet. Start betting!</div>';
+        return;
+    }
+
+    const dreamPct = (playerState.emotionIndex.dreamstate / total * 100).toFixed(1);
+    const anxPct = (playerState.emotionIndex.anxiety / total * 100).toFixed(1);
+    const gooberPct = (playerState.emotionIndex.gooberJoy / total * 100).toFixed(1);
+
+    indexEl.innerHTML = `
+        <div class="emotion-bar">
+            <div class="emotion-label">Dreamstate</div>
+            <div class="emotion-progress">
+                <div class="emotion-fill dreamstate" style="width: ${dreamPct}%"></div>
+            </div>
+            <div class="emotion-value">${dreamPct}%</div>
+        </div>
+        <div class="emotion-bar">
+            <div class="emotion-label">Anxiety</div>
+            <div class="emotion-progress">
+                <div class="emotion-fill anxiety" style="width: ${anxPct}%"></div>
+            </div>
+            <div class="emotion-value">${anxPct}%</div>
+        </div>
+        <div class="emotion-bar">
+            <div class="emotion-label">Goober Joy</div>
+            <div class="emotion-progress">
+                <div class="emotion-fill goober" style="width: ${gooberPct}%"></div>
+            </div>
+            <div class="emotion-value">${gooberPct}%</div>
+        </div>
+    `;
+}
+
+// Update jackpot display
+function updateJackpotDisplay() {
+    const jackpotEl = document.getElementById('dreamstateJackpot');
+    if (!jackpotEl) return;
+
+    jackpotEl.innerHTML = `
+        <div class="jackpot-amount">${dreamstateJackpot.poolPNR.toFixed(2)} PNR</div>
+        <div class="jackpot-label">Dreamstate Jackpot</div>
+        ${dreamstateJackpot.lastWinner
+            ? `<div class="jackpot-last">Last winner: ${dreamstateJackpot.lastWinner.substring(0, 6)}...${dreamstateJackpot.lastWinner.substring(38)}</div>`
+            : '<div class="jackpot-last">No winners yet. 1% chance on any win!</div>'
+        }
+    `;
+}
+
+// Render event feed
+function renderEventFeed() {
+    const feedEl = document.getElementById('eventFeed');
+    if (!feedEl) return;
+
+    if (!recentEvents || recentEvents.length === 0) {
+        feedEl.innerHTML = '<div class="no-events">No events yet. Start betting to see activity!</div>';
+        return;
+    }
+
+    feedEl.innerHTML = recentEvents.slice(0, 20).map(evt => {
+        const timeAgo = Math.floor((Date.now() - evt.ts) / 1000);
+        const timeStr = timeAgo < 60 ? `${timeAgo}s ago` :
+                        timeAgo < 3600 ? `${Math.floor(timeAgo / 60)}m ago` :
+                        `${Math.floor(timeAgo / 3600)}h ago`;
+
+        let icon = '💸';
+        if (evt.type === 'bet') icon = '💸';
+        if (evt.type === 'resolution') icon = evt.won ? '✅' : '❌';
+        if (evt.type === 'cashout') icon = '💰';
+        if (evt.type === 'trait') icon = '🎁';
+        if (evt.type === 'jackpot') icon = '🎰';
+
+        return `
+            <div class="event-item">
+                <span class="event-icon">${icon}</span>
+                <span class="event-text">${evt.user || 'Anonymous'} ${getEventText(evt)}</span>
+                <span class="event-time">${timeStr}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+// Get human-readable event text
+function getEventText(evt) {
+    switch (evt.type) {
+        case 'bet':
+            return `bet ${evt.amount} PNR on ${evt.side} - ${evt.market}`;
+        case 'resolution':
+            return `${evt.won ? 'won' : 'lost'} on ${evt.market} (${evt.result})`;
+        case 'cashout':
+            return `cashed out ${evt.amount} PNR from ${evt.market}`;
+        case 'trait':
+            return `unlocked trait: ${evt.trait}`;
+        case 'jackpot':
+            return `won DREAMSTATE JACKPOT: ${evt.amount} PNR!`;
+        default:
+            return 'did something';
     }
 }
 
@@ -1017,12 +1190,14 @@ function updatePositionsDisplay() {
         let value, profit, profitPercent;
         
         if (market.resolved) {
-            // Market resolved - calculate final payout
+            // Market resolved - calculate final payout (with house edge on winners)
             const won = position.side === market.resolution;
             if (won) {
-                // Winner gets payout based on total pool / winning shares
                 const winningShares = market.resolution === 'yes' ? market.yesShares : market.noShares;
-                value = position.shares * (totalShares / winningShares);
+                let basePayout = position.shares * (totalShares / winningShares);
+                // Apply house edge so winners get slightly less than fair value
+                const HOUSE_EDGE_CASHOUT = 0.9; // 10% cut on resolved payout
+                value = basePayout * HOUSE_EDGE_CASHOUT;
                 profit = value - position.amount;
                 profitPercent = ((profit / position.amount) * 100);
             } else {
@@ -1032,11 +1207,22 @@ function updatePositionsDisplay() {
                 profitPercent = -100;
             }
         } else {
-            // Market active - current value based on odds
+            // Market active - current value based on odds, with slight time-based decay for vibes
             const price = position.side === 'yes' 
                 ? market.yesShares / totalShares 
                 : market.noShares / totalShares;
-            value = position.shares * price;
+            let fairValue = position.shares * price;
+
+            // Time-based drift: as we approach endsAt, displayed value drifts slightly down
+            const now = Date.now();
+            const lifeSpan = Math.max(market.endsAt - market.createdAt, 1);
+            const elapsed = Math.min(Math.max(now - market.createdAt, 0), lifeSpan);
+            const progress = elapsed / lifeSpan; // 0 -> 1
+            // Drift factor from 1.0 down to ~0.9 near expiry
+            const DRIFT_MIN = 0.9;
+            const driftFactor = 1 - (1 - DRIFT_MIN) * Math.pow(progress, 1.2);
+
+            value = fairValue * driftFactor;
             profit = value - position.amount;
             profitPercent = ((profit / position.amount) * 100);
         }
@@ -1137,8 +1323,10 @@ async function cashOutPosition(marketId) {
         return;
     }
     
-    // Payout = user's shares * (total pool / winning shares)
-    const payout = position.shares * (totalShares / winningShares);
+    // Payout = user's shares * (total pool / winning shares), with house edge
+    const HOUSE_EDGE_CASHOUT = 0.9; // 10% less than fair value
+    const basePayout = position.shares * (totalShares / winningShares);
+    const payout = basePayout * HOUSE_EDGE_CASHOUT;
     
     if (payout <= 0) {
         alert('No payout available.');
@@ -1163,6 +1351,7 @@ async function cashOutPosition(marketId) {
             `💰 Cash Out ${payout.toFixed(2)} PNR?\n\n` +
             `Your position: ${position.shares.toFixed(2)} shares\n` +
             `Market result: ${market.resolution.toUpperCase()}\n\n` +
+            `House edge: 10% applied to final payout.\n\n` +
             `Note: In production, this would automatically transfer from the house wallet. ` +
             `For now, this payout is tracked in your stats.`
         );
@@ -1544,7 +1733,7 @@ function initializeApp() {
     
     // Render markets immediately (doesn't need ethers)
     try {
-        loadMarkets(); // Load saved market states
+        loadMarkets(); // Load saved market states (if none, current MARKETS becomes the source of truth)
         loadPositions();
         loadPlayerState();
         loadJackpot();
@@ -1554,6 +1743,8 @@ function initializeApp() {
         updatePlayerStats();
         updateJackpotDisplay();
         renderEventFeed();
+        // Persist initial market deadlines so timers survive refresh
+        saveMarkets();
         
         // Fetch token data on load (doesn't need wallet)
         fetchTokenData();
@@ -1684,17 +1875,6 @@ setInterval(() => {
     
     // Always update position display (it's lightweight)
     updatePositionsDisplay();
-    
-    // Update price history for all active markets (every 5 seconds)
-    if (now - (lastPriceUpdate || 0) > 5000) {
-        MARKETS.forEach(market => {
-            if (!market.resolved) {
-                updatePriceHistory(market);
-            }
-        });
-        lastPriceUpdate = now;
-    }
 }, 1000); // Check every second
 
-let lastPriceUpdate = 0;
 
