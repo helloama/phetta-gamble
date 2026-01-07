@@ -139,52 +139,56 @@ const ORACLE_LINES = {
 // Character data with images and bios from emotionull.art
 const CHARACTER_DATA = {
     'Phetta': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/phetta-transparent.png',
+        image: './images/phetta-transparent.png',
         bio: 'The purple rat protagonist of the Phettaverse, known for their laid-back attitude and quest for cheese.'
     },
     'Quack': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/quack-transparent.png',
+        image: './images/quack-transparent.png',
         bio: 'A fascinating frog/duck-like creature discovered on the beach islands. Has developed an obsession with smoking large amounts of luscious kush and relaxing with best friend Phetta.'
     },
     'Lucy': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/lucy-transparent.png',
+        image: './images/lucy-transparent.png',
         bio: 'A truly bizarre creature created from unusual substances discovered in the depths of the phettaverse. Power: Dream Emulation. Onset: 30-40 Minutes. Bends and twists time and space.'
     },
     '2Faced': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/2faced-transparent.png',
+        image: './images/2faced-transparent.png',
         bio: 'Notorious for pulling fast ones on unsuspecting individuals - at least twice in a single sitting. Enjoys racing through the Phettaverse woods in speedy running slippers.'
     },
     'Cloudy': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/cloudy-transparent.png',
+        image: './images/cloudy-transparent.png',
         bio: 'Carries power orbs that give him the unique power of controlling the environment, primarily clouds. Once an average alien, a dark and twisted night caused a new world to begin.'
     },
     'Gummy': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/gummy-transparent.png',
+        image: './images/gummy-transparent.png',
         bio: 'One of the most peaceful and gentle mushroom-based creatures in the Phettaverse. Exudes a calm aura that brings comfort and harmony, unlike other mushrooms that distort reality.'
     },
     'Beatstar': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/beatstar-transparent.png',
+        image: './images/beatstar-transparent.png',
         bio: 'The DJ who has attracted a large number of people! While in his tech suit, he has the power to pump up the bass and truly get the party started.'
     },
     'Chef': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/chef-transparent.png',
+        image: './images/chef-transparent.png',
         bio: 'The Ramen Shop owner that resides in the Phettaverse City. This squid-like creature seems to have been 3D printed... Possibly Phetta 3D printed them in his past.'
     },
     'Jazz Ants': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/jazz-ants-transparent.png',
+        image: './images/jazz-ants-transparent.png',
         bio: 'Originally starring on April 19, 2021, Jazz Ants have a history in the Phettaverse. Recently moved and reactivated by Phetta in their Studio Room.'
     },
     'Robo-Alien': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/robo-alien-transparent.png',
+        image: './images/robo-alien-transparent.png',
         bio: 'A fast-moving, grooving robotic extraterrestrial that moves at breakneck speed. Kept safe in its mecha suit, has an instantaneous link to the internet and access to all of its power.'
     },
     'Time Creature': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/time-creature-transparent.png',
+        image: './images/time-creature-transparent.png',
         bio: 'A creature located in the Clock Realm where time operates in mysterious ways.'
     },
     'Stoned Rabbit': {
-        image: 'https://emotionull.art/wp-content/uploads/2024/01/stoned-rabbit-transparent.png',
+        image: './images/stoned-rabbit-transparent.png',
         bio: 'Previous data was lost during the great awakening of the Phettagotchi. We are actively working to compile and restore this valuable knowledge.'
+    },
+    'PunkRockBee': {
+        image: './images/punkrockbee-768x768.png',
+        bio: 'Buzzing through glitchcore airwaves, dripping resin and feedback.'
     }
 };
 
@@ -192,6 +196,104 @@ const CHARACTER_DATA = {
 const HOUSE_FEE_PERCENT = 0.02;
 
 // Phettaverse Prediction Markets - Weird, surreal, Adult Swim vibes
+const MARKET_TEMPLATES = {
+    characters: [
+        'Phetta',
+        'Quack',
+        'Lucy',
+        '2Faced',
+        'Cloudy',
+        'Gummy',
+        'Beatstar',
+        'Chef',
+        'Jazz Ants',
+        'Robo-Alien',
+        'Time Creature',
+        'Stoned Rabbit',
+        'PunkRockBee'
+    ],
+    hooks: [
+        'Will __CHAR__ breach the Hidden Milk Moon protocol?',
+        'Will __CHAR__ rip a hole in Dreamstate before sunrise?',
+        'Will __CHAR__ outsmart Sheldon in the Whisper Code?',
+        'Does __CHAR__ summon a VIBE whale from Layer Zero?',
+        'Will __CHAR__ drop a glitch tape that melts Gooberland?',
+        'Will __CHAR__ arbitrage Base↔ETH before anxiety peaks?',
+        'Will __CHAR__ bend time until Tuesday turns ultraviolet?'
+    ],
+    descriptions: [
+        'Adult Swim hour: strange liquidity, stranger oracles. We pretend this is data.',
+        'Y2K brainrot: neon CRT static and on-chain hopium, all at once.',
+        'Lore-scraped from Emotionull dreams and half-finished blog posts.',
+        'If this hits, the Dreamstate Jackpot hums louder. If it misses, the house laughs.',
+        'Cartoon Network at 3AM: low bitrate, high stakes, questionable math.'
+    ],
+    storyArcs: ['boba-v-sheldon', 'beach-dreams', 'time-bend', 'default'],
+    moods: ['dreamstate', 'anxiety', 'gooberJoy'],
+    types: ['sprint', 'journey', 'epoch']
+};
+
+function randomChoice(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomBetween(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function buildRandomMarket() {
+    const character = randomChoice(MARKET_TEMPLATES.characters);
+    const hook = randomChoice(MARKET_TEMPLATES.hooks).replace('__CHAR__', character);
+    const description = randomChoice(MARKET_TEMPLATES.descriptions);
+    const storyArc = randomChoice(MARKET_TEMPLATES.storyArcs);
+    const mood = randomChoice(MARKET_TEMPLATES.moods);
+    const type = randomChoice(MARKET_TEMPLATES.types);
+
+    const minutes = randomBetween(type === 'sprint' ? 8 : type === 'journey' ? 25 : 50, type === 'epoch' ? 70 : type === 'journey' ? 40 : 20);
+    const now = Date.now();
+
+    return {
+        id: `auto-${now}-${Math.random().toString(36).slice(2, 6)}`,
+        title: hook,
+        description,
+        character,
+        type,
+        mood,
+        storyArc,
+        yesShares: randomBetween(250, 750),
+        noShares: randomBetween(250, 750),
+        resolved: false,
+        resolution: null,
+        endsAt: now + minutes * 60 * 1000,
+        createdAt: now
+    };
+}
+
+const MAX_MARKETS = 12;
+
+function pruneOldResolved() {
+    if (MARKETS.length <= MAX_MARKETS) return;
+    // Remove oldest resolved first
+    let removed = 0;
+    for (let i = 0; i < MARKETS.length && MARKETS.length - removed > MAX_MARKETS; i++) {
+        if (MARKETS[i].resolved) {
+            MARKETS.splice(i, 1);
+            i--;
+            removed++;
+        }
+    }
+    // If still too many, drop from the front
+    while (MARKETS.length > MAX_MARKETS) {
+        MARKETS.shift();
+    }
+}
+
+function addFreshMarket() {
+    MARKETS.push(buildRandomMarket());
+    pruneOldResolved();
+    saveMarkets();
+}
+
 const MARKETS = [
     {
         id: 'phetta-cheese',
@@ -713,10 +815,10 @@ function renderMarkets() {
             </div>
             <div class="market-header">
                 <img 
-                    src="${charData.image || 'https://emotionull.art/wp-content/uploads/2022/12/punkrockbee-768x768.png'}" 
+                    src="${charData.image || './images/punkrockbee-768x768.png'}" 
                     alt="${market.character}" 
                     class="character-image" 
-                    onerror="this.onerror=null;this.src='https://emotionull.art/wp-content/uploads/2022/12/punkrockbee-768x768.png';"
+                    onerror="this.onerror=null;this.src='./images/punkrockbee-768x768.png';"
                 >
                 <div class="market-header-text">
                     <div class="market-title">${market.title}</div>
@@ -762,10 +864,10 @@ function openMarketModal(market) {
     modalInfo.innerHTML = `
         <div class="modal-character-header">
             <img 
-                src="${charData.image || 'https://emotionull.art/wp-content/uploads/2022/12/punkrockbee-768x768.png'}" 
+                src="${charData.image || './images/punkrockbee-768x768.png'}" 
                 alt="${market.character}" 
                 class="modal-character-image" 
-                onerror="this.onerror=null;this.src='https://emotionull.art/wp-content/uploads/2022/12/punkrockbee-768x768.png';"
+                onerror="this.onerror=null;this.src='./images/punkrockbee-768x768.png';"
             >
             <div>
                 <p><strong>Character:</strong> ${market.character}</p>
@@ -1854,6 +1956,7 @@ let lastMarketRender = 0;
 setInterval(() => {
     const now = Date.now();
     let needsUpdate = false;
+    let newMarketsNeeded = 0;
     
     MARKETS.forEach(market => {
         if (!market.resolved && now >= market.endsAt) {
@@ -1867,6 +1970,7 @@ setInterval(() => {
             processMarketResolution(market);
             
             console.log(`Market ${market.id} resolved: ${market.resolution}`);
+            newMarketsNeeded += 1;
         }
     });
     
@@ -1875,6 +1979,15 @@ setInterval(() => {
         renderMarkets();
         updatePositionsDisplay();
         lastMarketRender = now;
+    }
+    
+    // Spawn fresh markets to replace resolved ones
+    if (newMarketsNeeded > 0) {
+        for (let i = 0; i < newMarketsNeeded; i++) {
+            addFreshMarket();
+        }
+        renderMarkets();
+        updatePositionsDisplay();
     }
     
     // Update timers on cards every second (but only re-render markets every 5 seconds to save performance)

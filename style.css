@@ -43,6 +43,31 @@ body::before {
     100% { transform: translate3d(0, 0, 0); }
 }
 
+/* Moving diagonal stripes for Y2K brainrot */
+body::after {
+    content: "";
+    position: fixed;
+    inset: -60px;
+    background: repeating-linear-gradient(
+        -15deg,
+        rgba(255, 255, 255, 0.03) 0,
+        rgba(255, 255, 255, 0.03) 8px,
+        transparent 8px,
+        transparent 18px
+    );
+    mix-blend-mode: soft-light;
+    opacity: 0.35;
+    pointer-events: none;
+    animation: stripeDrift 14s linear infinite;
+    z-index: -2;
+}
+
+@keyframes stripeDrift {
+    0% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(-12px, 6px, 0); }
+    100% { transform: translate3d(0, 0, 0); }
+}
+
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -384,6 +409,8 @@ main {
     border-radius: 14px;
     padding: 20px 20px 18px;
     overflow: hidden;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    animation: vibeJitter 6s ease-in-out infinite;
 }
 
 .vibe-oracles-panel::before,
@@ -469,6 +496,14 @@ main {
     color: #f39c12;
     text-transform: uppercase;
     letter-spacing: 0.08em;
+}
+
+@keyframes vibeJitter {
+    0% { transform: translate3d(0,0,0); }
+    25% { transform: translate3d(-1px, 1px, 0) scale(1.001); }
+    50% { transform: translate3d(1px, -1px, 0) scale(1.002); }
+    75% { transform: translate3d(-1px, -0.5px, 0) scale(1.001); }
+    100% { transform: translate3d(0,0,0); }
 }
 
 .markets-list {
