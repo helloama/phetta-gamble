@@ -139,55 +139,55 @@ const ORACLE_LINES = {
 // Character data with images and bios from emotionull.art
 const CHARACTER_DATA = {
     'Phetta': {
-        image: './images/phetta-transparent.png',
+        image: '/images/phetta-transparent.png',
         bio: 'The purple rat protagonist of the Phettaverse, known for their laid-back attitude and quest for cheese.'
     },
     'Quack': {
-        image: './images/quack-transparent.png',
+        image: '/images/quack-transparent.png',
         bio: 'A fascinating frog/duck-like creature discovered on the beach islands. Has developed an obsession with smoking large amounts of luscious kush and relaxing with best friend Phetta.'
     },
     'Lucy': {
-        image: './images/lucy-transparent.png',
+        image: '/images/lucy-transparent.png',
         bio: 'A truly bizarre creature created from unusual substances discovered in the depths of the phettaverse. Power: Dream Emulation. Onset: 30-40 Minutes. Bends and twists time and space.'
     },
     '2Faced': {
-        image: './images/2faced-transparent.png',
+        image: '/images/2faced-transparent.png',
         bio: 'Notorious for pulling fast ones on unsuspecting individuals - at least twice in a single sitting. Enjoys racing through the Phettaverse woods in speedy running slippers.'
     },
     'Cloudy': {
-        image: './images/cloudy-transparent.png',
+        image: '/images/cloudy-transparent.png',
         bio: 'Carries power orbs that give him the unique power of controlling the environment, primarily clouds. Once an average alien, a dark and twisted night caused a new world to begin.'
     },
     'Gummy': {
-        image: './images/gummy-transparent.png',
+        image: '/images/gummy-transparent.png',
         bio: 'One of the most peaceful and gentle mushroom-based creatures in the Phettaverse. Exudes a calm aura that brings comfort and harmony, unlike other mushrooms that distort reality.'
     },
     'Beatstar': {
-        image: './images/beatstar-transparent.png',
+        image: '/images/beatstar-transparent.png',
         bio: 'The DJ who has attracted a large number of people! While in his tech suit, he has the power to pump up the bass and truly get the party started.'
     },
     'Chef': {
-        image: './images/chef-transparent.png',
+        image: '/images/chef-transparent.png',
         bio: 'The Ramen Shop owner that resides in the Phettaverse City. This squid-like creature seems to have been 3D printed... Possibly Phetta 3D printed them in his past.'
     },
     'Jazz Ants': {
-        image: './images/jazz-ants-transparent.png',
+        image: '/images/jazz-ants-transparent.png',
         bio: 'Originally starring on April 19, 2021, Jazz Ants have a history in the Phettaverse. Recently moved and reactivated by Phetta in their Studio Room.'
     },
     'Robo-Alien': {
-        image: './images/robo-alien-transparent.png',
+        image: '/images/robo-alien-transparent.png',
         bio: 'A fast-moving, grooving robotic extraterrestrial that moves at breakneck speed. Kept safe in its mecha suit, has an instantaneous link to the internet and access to all of its power.'
     },
     'Time Creature': {
-        image: './images/time-creature-transparent.png',
+        image: '/images/time-creature-transparent.png',
         bio: 'A creature located in the Clock Realm where time operates in mysterious ways.'
     },
     'Stoned Rabbit': {
-        image: './images/stoned-rabbit-transparent.png',
+        image: '/images/stoned-rabbit-transparent.png',
         bio: 'Previous data was lost during the great awakening of the Phettagotchi. We are actively working to compile and restore this valuable knowledge.'
     },
     'PunkRockBee': {
-        image: './images/punkrockbee-768x768.png',
+        image: '/images/punkrockbee-768x768.png',
         bio: 'Buzzing through glitchcore airwaves, dripping resin and feedback.'
     }
 };
@@ -815,10 +815,10 @@ function renderMarkets() {
             </div>
             <div class="market-header">
                 <img 
-                    src="${charData.image || './images/punkrockbee-768x768.png'}" 
+                    src="${charData.image || '/images/punkrockbee-768x768.png'}" 
                     alt="${market.character}" 
                     class="character-image" 
-                    onerror="this.onerror=null;this.src='./images/punkrockbee-768x768.png';"
+                    onerror="this.onerror=null;this.src='/images/punkrockbee-768x768.png';"
                 >
                 <div class="market-header-text">
                     <div class="market-title">${market.title}</div>
@@ -864,10 +864,10 @@ function openMarketModal(market) {
     modalInfo.innerHTML = `
         <div class="modal-character-header">
             <img 
-                src="${charData.image || './images/punkrockbee-768x768.png'}" 
+                src="${charData.image || '/images/punkrockbee-768x768.png'}" 
                 alt="${market.character}" 
                 class="modal-character-image" 
-                onerror="this.onerror=null;this.src='./images/punkrockbee-768x768.png';"
+                onerror="this.onerror=null;this.src='/images/punkrockbee-768x768.png';"
             >
             <div>
                 <p><strong>Character:</strong> ${market.character}</p>
