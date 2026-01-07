@@ -506,6 +506,8 @@ main {
     100% { transform: translate3d(0,0,0); }
 }
 
+.jackpot-section { display: none; }
+
 .markets-list {
     display: flex;
     flex-direction: column;
